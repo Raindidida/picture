@@ -5,3 +5,12 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+
+# Video files
+¿Ú¿Ú÷‹ ”∆µ/
+
+# huobao-drama sensitive/generated files
+huobao-drama/data/*.db
+huobao-drama/configs/config.yaml
+huobao-drama/data/storage/
+.env.picture
