@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>点背景生成器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: auto;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a1a;
+      color: #eee;
+    }
+    .toolbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+    .toolbar label { font-size: 13px; opacity: 0.9; min-width: 2.2em; }
+    .toolbar input[type="number"] {
+      width: 52px; padding: 6px 6px;
+      background: #333; border: 1px solid #555;
+      color: #fff; border-radius: 4px;
+      font-size: 12px;
+    }
+    .toolbar input[type="range"] {
+      width: 88px; height: 6px;
+      accent-color: #C84A2A;
+    }
+    .toolbar select {
+      padding: 6px 10px;
+      background: #333; border: 1px solid #555;
+      color: #fff; border-radius: 4px;
+      font-size: 13px;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #C84A2A;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover { background: #a63d20; }
+    .btn.secondary { background: #444; }
+    .btn.secondary:hover { background: #555; }
+    .preview {
+      margin-top: 56px;
+      min-height: calc(100vh - 56px);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .preview-inner {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .preview-inner.dark { background: #2a2a2a; }
+    #dot-svg {
+      display: block;
+    }
+    .row { display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="row">
+      <label>宽</label>
+      <input type="range" id="width" min="320" max="1920" value="640" step="40">
+      <input type="number" id="widthNum" value="640" min="320" max="1920" step="40">
+    </div>
+    <div class="row">
+      <label>高</label>
+      <input type="range" id="height" min="320" max="1920" value="640" step="40">
+      <input type="number" id="heightNum" value="640" min="320" max="1920" step="40">
+    </div>
+    <div class="row">
+      <label>间距</label>
+      <input type="range" id="step" min="8" max="80" value="32" step="2">
+      <input type="number" id="stepNum" value="32" min="8" max="80" step="2">
+    </div>
+    <div class="row">
+      <label>半径</label>
+      <input type="range" id="radius" min="3" max="30" value="9" step="1">
+      <input type="number" id="radiusNum" value="0.9" min="0.3" max="3" step="0.1">
+    </div>
+    <div class="row">
+      <label>形状</label>
+      <select id="shape">
+        <option value="circle">圆</option>
+        <option value="roundRect">圆角矩形</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>背景</label>
+      <select id="bgMode">
+        <option value="light">浅色</option>
+        <option value="dark">深色</option>
+      </select>
+    </div>
+    <button type="button" class="btn" id="btnDownload">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      下载 SVG
+    </button>
+  </div>
+
+  <div class="preview">
+    <div class="preview-inner" id="previewInner">
+      <svg id="dot-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <script>
+    const widthRange = document.getElementById('width');
+    const widthNum = document.getElementById('widthNum');
+    const heightRange = document.getElementById('height');
+    const heightNum = document.getElementById('heightNum');
+    const stepRange = document.getElementById('step');
+    const stepNum = document.getElementById('stepNum');
+    const radiusRange = document.getElementById('radius');
+    const radiusNum = document.getElementById('radiusNum');
+    const shapeSelect = document.getElementById('shape');
+    const bgMode = document.getElementById('bgMode');
+    const previewInner = document.getElementById('previewInner');
+    const btnDownload = document.getElementById('btnDownload');
+
+    function syncRangeToNum(range, num) { num.value = range.value; }
+    function syncNumToRange(num, range) { range.value = num.value; }
+
+    widthRange.addEventListener('input', () => { syncRangeToNum(widthRange, widthNum); redraw(); });
+    widthNum.addEventListener('change', () => { syncNumToRange(widthNum, widthRange); redraw(); });
+    heightRange.addEventListener('input', () => { syncRangeToNum(heightRange, heightNum); redraw(); });
+    heightNum.addEventListener('change', () => { syncNumToRange(heightNum, heightRange); redraw(); });
+    stepRange.addEventListener('input', () => { syncRangeToNum(stepRange, stepNum); redraw(); });
+    stepNum.addEventListener('change', () => { syncNumToRange(stepNum, stepRange); redraw(); });
+    radiusRange.addEventListener('input', () => { radiusNum.value = (radiusRange.value / 10).toFixed(1); redraw(); });
+    radiusNum.addEventListener('change', () => {
+      let v = parseFloat(radiusNum.value);
+      if (isNaN(v)) v = 0.9;
+      v = Math.max(0.3, Math.min(3, v));
+      radiusNum.value = v.toFixed(1);
+      radiusRange.value = Math.round(v * 10);
+      redraw();
+    });
+    shapeSelect.addEventListener('change', redraw);
+    bgMode.addEventListener('change', redraw);
+
+    function mkRng(seed) {
+      let s = seed >>> 0;
+      return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 0xFFFFFFFF; };
+    }
+
+    function generateDotSVG(w, h, step, radius, shapeKind, isDark) {
+      const rng = mkRng(0xDECAFBAD);
+      const items = [];
+      for (let y = step / 2; y < h + step; y += step) {
+        for (let x = step / 2; x < w + step; x += step) {
+          const jx = (rng() - 0.5) * 8;
+          const jy = (rng() - 0.5) * 8;
+          const a = 0.06 + rng() * 0.14;
+          const t = rng();
+          let cr, cg, cb;
+          if (isDark) {
+            if (t < 0.35) { cr = 180; cg = 165; cb = 155; }
+            else if (t < 0.65) { cr = 155; cg = 158; cb = 180; }
+            else { cr = 168; cg = 166; cb = 168; }
+          } else {
+            if (t < 0.35) { cr = 40; cg = 30; cb = 22; }
+            else if (t < 0.65) { cr = 20; cg = 18; cb = 28; }
+            else { cr = 28; cg = 26; cb = 24; }
+          }
+          const cx = x + jx;
+          const cy = y + jy;
+          items.push({ cx, cy, r: radius, fill: `rgba(${cr},${cg},${cb},${a.toFixed(3)})` });
+        }
+      }
+      const bgFill = isDark ? '#2a2a2a' : '#F7F5F2';
+      let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">\n`;
+      svg += `  <rect width="100%" height="100%" fill="${bgFill}"/>\n`;
+      const isCircle = shapeKind === 'circle';
+      items.forEach(({ cx, cy, r, fill }) => {
+        if (isCircle) {
+          svg += `  <circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r}" fill="${fill}"/>\n`;
+        } else {
+          const half = r;
+          const rx = Math.min(r * 0.6, half);
+          const ry = rx;
+          const x = (cx - half).toFixed(2);
+          const y = (cy - half).toFixed(2);
+          const wh = (half * 2).toFixed(2);
+          svg += `  <rect x="${x}" y="${y}" width="${wh}" height="${wh}" rx="${rx.toFixed(2)}" ry="${ry.toFixed(2)}" fill="${fill}"/>\n`;
+        }
+      });
+      svg += '</svg>';
+      return svg;
+    }
+
+    function redraw() {
+      const w = Number(widthNum.value) || 640;
+      const h = Number(heightNum.value) || 640;
+      const step = Number(stepNum.value) || 32;
+      const radius = parseFloat(radiusNum.value) || 0.9;
+      const shapeKind = shapeSelect.value;
+      const isDark = bgMode.value === 'dark';
+      previewInner.classList.toggle('dark', isDark);
+      const svgString = generateDotSVG(w, h, step, radius, shapeKind, isDark);
+      const wrap = document.createElement('div');
+      wrap.innerHTML = svgString.replace('<svg', '<svg id="dot-svg"');
+      const newSvg = wrap.querySelector('svg');
+      previewInner.innerHTML = '';
+      previewInner.appendChild(newSvg);
+    }
+
+    function downloadSVG() {
+      const w = Number(widthNum.value) || 640;
+      const h = Number(heightNum.value) || 640;
+      const step = Number(stepNum.value) || 32;
+      const radius = parseFloat(radiusNum.value) || 0.9;
+      const shapeKind = shapeSelect.value;
+      const isDark = bgMode.value === 'dark';
+      const svgString = generateDotSVG(w, h, step, radius, shapeKind, isDark);
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dot-background-${w}x${h}-step${step}.svg`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    btnDownload.addEventListener('click', downloadSVG);
+    redraw();
+  </script>
+</body>
+</html>

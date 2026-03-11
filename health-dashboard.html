@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthDash — 医疗健康管理平台</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:    #1E40AF;
+      --primary-light: #3B82F6;
+      --primary-lighter: #DBEAFE;
+      --accent:     #F59E0B;
+      --accent-light: #FEF3C7;
+      --bg:         #F0F4FA;
+      --card:       #FFFFFF;
+      --text:       #1E3A8A;
+      --text-muted: #64748B;
+      --text-body:  #334155;
+      --success:    #10B981;
+      --success-bg: #D1FAE5;
+      --danger:     #EF4444;
+      --danger-bg:  #FEE2E2;
+      --warning:    #F59E0B;
+      --warning-bg: #FEF3C7;
+      --border:     #E2E8F0;
+      --sidebar-w:  240px;
+      --header-h:   64px;
+    }
+    html { font-family: 'Fira Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.6; }
+    body { background: var(--bg); color: var(--text-body); min-height: 100vh; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Focus ring */
+    :focus-visible { outline: 3px solid var(--primary-light); outline-offset: 2px; border-radius: 4px; }
+
+    /* Layout */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-text { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.2; }
+    .logo-sub { color: rgba(255,255,255,0.55); font-size: 11px; }
+    .sidebar-section { padding: 20px 12px 8px; }
+    .sidebar-label { color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; padding: 0 8px; margin-bottom: 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,0.18); color: #fff; }
+    .nav-item svg { flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--danger);
+      color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .user-card:hover { background: rgba(255,255,255,0.08); }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0;
+    }
+    .user-name { color: #fff; font-size: 13px; font-weight: 600; }
+    .user-role { color: rgba(255,255,255,0.5); font-size: 11px; }
+
+    /* Main */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Header */
+    .header {
+      height: var(--header-h);
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .header-title { font-size: 18px; font-weight: 700; color: var(--text); flex: 1; }
+    .header-date { color: var(--text-muted); font-size: 13px; }
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 14px;
+      min-width: 220px;
+    }
+    .search-box input {
+      border: none; background: transparent; font-family: inherit;
+      font-size: 13px; color: var(--text-body); outline: none; width: 100%;
+    }
+    .search-box input::placeholder { color: var(--text-muted); }
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .icon-btn:hover { background: var(--bg); }
+    .notif-dot {
+      position: absolute; top: 7px; right: 7px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--danger);
+      border: 2px solid var(--card);
+    }
+
+    /* Content */
+    .content { padding: 24px 28px; flex: 1; }
+
+    /* KPI Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: box-shadow 0.2s ease;
+    }
+    .kpi-card:hover { box-shadow: 0 4px 20px rgba(30,64,175,0.08); }
+    .kpi-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .kpi-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .kpi-badge {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 20px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .kpi-value { font-size: 28px; font-weight: 700; color: var(--text); font-family: 'Fira Code', monospace; line-height: 1; margin-bottom: 4px; }
+    .kpi-label { font-size: 13px; color: var(--text-muted); }
+
+    /* Charts row */
+    .charts-row { display: grid; grid-template-columns: 1fr 340px; gap: 16px; margin-bottom: 24px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+    .card-header { padding: 18px 20px 0; display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .card-body { padding: 16px 20px 20px; }
+
+    /* Line Chart */
+    .chart-wrap { width: 100%; height: 200px; position: relative; }
+    .chart-svg { width: 100%; height: 100%; overflow: visible; }
+    .chart-grid-line { stroke: var(--border); stroke-width: 1; }
+    .chart-area { fill: url(#areaGrad); opacity: 0.6; }
+    .chart-line { fill: none; stroke: var(--primary-light); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-line-2 { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 3; }
+    .chart-dot { fill: var(--primary-light); stroke: var(--card); stroke-width: 2; }
+    .y-label { font-size: 10px; fill: var(--text-muted); font-family: 'Fira Code', monospace; }
+    .x-label { font-size: 11px; fill: var(--text-muted); }
+    .chart-legend { display: flex; gap: 16px; margin-top: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+    /* Donut Chart */
+    .donut-wrap { display: flex; flex-direction: column; align-items: center; }
+    .donut-center-text { font-size: 28px; font-weight: 700; color: var(--text); font-family: 'Fira Code', monospace; }
+    .donut-center-label { font-size: 12px; color: var(--text-muted); }
+    .dept-list { width: 100%; margin-top: 8px; }
+    .dept-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+    .dept-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .dept-name { font-size: 13px; color: var(--text-body); flex: 1; }
+    .dept-count { font-size: 13px; font-weight: 600; color: var(--text); font-family: 'Fira Code', monospace; }
+    .dept-pct { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+
+    /* Bottom row */
+    .bottom-row { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+
+    /* Patient Table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; padding: 10px 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    thead th:first-child { border-radius: 8px 0 0 0; }
+    thead th:last-child { border-radius: 0 8px 0 0; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; cursor: pointer; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #F8FAFF; }
+    tbody td { padding: 12px 16px; font-size: 13px; color: var(--text-body); }
+    .patient-name { font-weight: 600; color: var(--text); }
+    .patient-id { font-size: 11px; color: var(--text-muted); font-family: 'Fira Code', monospace; }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .status-badge.stable { background: var(--success-bg); color: #065F46; }
+    .status-badge.warning { background: var(--warning-bg); color: #92400E; }
+    .status-badge.critical { background: var(--danger-bg); color: #991B1B; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .stable .status-dot { background: var(--success); }
+    .warning .status-dot { background: var(--warning); }
+    .critical .status-dot { background: var(--danger); }
+    .vital-chip {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px; font-weight: 500;
+      padding: 2px 6px;
+      background: var(--primary-lighter);
+      color: var(--primary);
+      border-radius: 4px;
+    }
+
+    /* Alerts panel */
+    .alerts-list { display: flex; flex-direction: column; gap: 10px; }
+    .alert-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .alert-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .alert-item.critical { background: #FFF5F5; border-color: #FECACA; }
+    .alert-item.warning  { background: #FFFBEB; border-color: #FDE68A; }
+    .alert-item.info     { background: #EFF6FF; border-color: #BFDBFE; }
+    .alert-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .alert-item.critical .alert-icon { background: var(--danger-bg); }
+    .alert-item.warning  .alert-icon { background: var(--warning-bg); }
+    .alert-item.info     .alert-icon { background: var(--primary-lighter); }
+    .alert-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .alert-desc  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .alert-time  { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-family: 'Fira Code', monospace; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ─── SVG Icons ─── */
+const Icon = ({ name, size = 18, color = "currentColor" }) => {
+  const icons = {
+    home: <><rect x="3" y="11" width="7" height="9" rx="1"/><path d="M14 20V13a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v7"/><path d="M3 11l9-9 9 9"/></>,
+    users: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
+    calendar: <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
+    heart: <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>,
+    activity: <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>,
+    bell: <><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>,
+    search: <><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>,
+    settings: <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
+    pill: <><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></>,
+    clipboard: <><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></>,
+    trending: <><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></>,
+    alert: <><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>,
+    info: <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>,
+    arrowup: <><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></>,
+    arrowdown: <><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></>,
+    crosshair: <><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="22" y1="12" x2="19" y2="12"/><line x1="5" y1="12" x2="2" y2="12"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/></>,
+    bed: <><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></>,
+    eye: <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>,
+    plus: <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
+    more: <><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></>,
+    logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {icons[name]}
+    </svg>
+  );
+};
+
+/* ─── KPI Data ─── */
+const kpiData = [
+  { label: "今日就诊", value: "248", unit: "人", change: +12, icon: "users", bg: "#DBEAFE", iconColor: "#1E40AF", trend: "up" },
+  { label: "待诊预约", value: "83",  unit: "人", change: +5,  icon: "calendar", bg: "#FEF3C7", iconColor: "#D97706", trend: "up" },
+  { label: "平均心率", value: "76",  unit: "bpm", change: -2, icon: "heart", bg: "#D1FAE5", iconColor: "#059669", trend: "down" },
+  { label: "危重警报", value: "4",   unit: "条", change: +1,  icon: "alert", bg: "#FEE2E2", iconColor: "#DC2626", trend: "up" },
+];
+
+/* ─── Chart Data ─── */
+const visitData = [
+  { label: "周一", curr: 210, prev: 185 },
+  { label: "周二", curr: 235, prev: 200 },
+  { label: "周三", curr: 198, prev: 220 },
+  { label: "周四", curr: 267, prev: 210 },
+  { label: "周五", curr: 248, prev: 195 },
+  { label: "周六", curr: 180, prev: 160 },
+  { label: "周日", curr: 145, prev: 130 },
+];
+
+const deptData = [
+  { name: "内科", count: 87, color: "#1E40AF", pct: 35 },
+  { name: "外科", count: 52, color: "#3B82F6", pct: 21 },
+  { name: "急诊科", count: 41, color: "#F59E0B", pct: 17 },
+  { name: "儿科",  count: 38, color: "#10B981", pct: 15 },
+  { name: "其他",  count: 30, color: "#94A3B8", pct: 12 },
+];
+
+/* ─── Patients ─── */
+const patients = [
+  { id: "P-2041", name: "张伟", age: 45, dept: "内科", doctor: "李明医生", status: "stable",  hr: 72,  bp: "120/80", temp: 36.5, time: "09:12" },
+  { id: "P-2042", name: "王芳", age: 62, dept: "急诊科", doctor: "赵静医生", status: "critical", hr: 108, bp: "155/95", temp: 38.9, time: "09:38" },
+  { id: "P-2043", name: "李明", age: 34, dept: "外科",  doctor: "陈强医生", status: "warning",  hr: 88,  bp: "135/88", temp: 37.4, time: "10:05" },
+  { id: "P-2044", name: "刘洋", age: 28, dept: "儿科",  doctor: "林华医生", status: "stable",  hr: 80,  bp: "118/76", temp: 36.8, time: "10:22" },
+  { id: "P-2045", name: "陈静", age: 55, dept: "内科",  doctor: "李明医生", status: "warning",  hr: 95,  bp: "142/90", temp: 37.8, time: "10:47" },
+];
+
+/* ─── Alerts ─── */
+const alerts = [
+  { type: "critical", title: "血压危急值警报", desc: "P-2042 王芳  BP 155/95 mmHg", time: "2 分钟前", icon: "alert" },
+  { type: "warning",  title: "体温升高提示",   desc: "P-2042 体温 38.9°C，建议复查",    time: "5 分钟前", icon: "crosshair" },
+  { type: "warning",  title: "心率偏高",       desc: "P-2043 李明  HR 88 bpm",          time: "18 分钟前", icon: "heart" },
+  { type: "info",     title: "新患者入院",     desc: "今日入院 12 名，较昨日 +3",         time: "32 分钟前", icon: "info" },
+  { type: "info",     title: "用药提醒",       desc: "5 名患者下午用药时间临近",           time: "1 小时前", icon: "pill" },
+];
+
+/* ─── Line Chart Component ─── */
+const LineChart = () => {
+  const W = 520, H = 180, padL = 38, padR = 10, padT = 10, padB = 30;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+  const maxVal = 300;
+  const yTicks = [0, 100, 200, 300];
+
+  const toX = i => padL + (i / (visitData.length - 1)) * innerW;
+  const toY = v => padT + innerH - (v / maxVal) * innerH;
+
+  const linePath = arr => arr.map((d, i) => `${i === 0 ? 'M' : 'L'}${toX(i)},${toY(d)}`).join(' ');
+  const areaPath = arr => `${linePath(arr)} L${toX(arr.length - 1)},${padT + innerH} L${toX(0)},${padT + innerH} Z`;
+
+  const currLine = linePath(visitData.map(d => d.curr));
+  const prevLine = linePath(visitData.map(d => d.prev));
+  const currArea = areaPath(visitData.map(d => d.curr));
+
+  return (
+    <div className="chart-wrap">
+      <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.25"/>
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0"/>
+          </linearGradient>
+        </defs>
+        {/* Grid */}
+        {yTicks.map(v => (
+          <g key={v}>
+            <line x1={padL} y1={toY(v)} x2={W - padR} y2={toY(v)} className="chart-grid-line" />
+            <text x={padL - 6} y={toY(v) + 4} className="y-label" textAnchor="end">{v}</text>
+          </g>
+        ))}
+        {/* X Labels */}
+        {visitData.map((d, i) => (
+          <text key={i} x={toX(i)} y={H - 6} className="x-label" textAnchor="middle">{d.label}</text>
+        ))}
+        {/* Area */}
+        <path d={currArea} className="chart-area" />
+        {/* Lines */}
+        <path d={prevLine} className="chart-line-2" />
+        <path d={currLine} className="chart-line" />
+        {/* Dots */}
+        {visitData.map((d, i) => (
+          <circle key={i} cx={toX(i)} cy={toY(d.curr)} r="4" className="chart-dot" />
+        ))}
+      </svg>
+      <div className="chart-legend">
+        <div className="legend-item"><div className="legend-dot" style={{background:"#3B82F6"}} />本周</div>
+        <div className="legend-item"><div className="legend-dot" style={{background:"#F59E0B"}} />上周</div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Donut Chart ─── */
+const DonutChart = () => {
+  const R = 60, cx = 80, cy = 80, strokeW = 22;
+  const circumference = 2 * Math.PI * R;
+  let offset = 0;
+  const segments = deptData.map(d => {
+    const dashLen = (d.pct / 100) * circumference;
+    const gap = circumference - dashLen;
+    const seg = { ...d, dashLen, gap, offset };
+    offset += dashLen + 2;
+    return seg;
+  });
+
+  return (
+    <div className="donut-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160" aria-label="科室分布图">
+        <circle cx={cx} cy={cy} r={R} fill="none" stroke="#F1F5F9" strokeWidth={strokeW} />
+        {segments.map((s, i) => (
+          <circle key={i} cx={cx} cy={cy} r={R} fill="none"
+            stroke={s.color} strokeWidth={strokeW}
+            strokeDasharray={`${s.dashLen - 2} ${circumference - s.dashLen + 2}`}
+            strokeDashoffset={-s.offset + circumference * 0.25}
+            style={{ transition: 'stroke-dashoffset 0.3s' }}
+          />
+        ))}
+        <text x={cx} y={cy - 6} textAnchor="middle" className="donut-center-text" style={{fontSize:22,fontWeight:700,fill:'#1E3A8A',fontFamily:'Fira Code'}}>248</text>
+        <text x={cx} y={cy + 14} textAnchor="middle" style={{fontSize:11,fill:'#64748B',fontFamily:'Fira Sans'}}>今日总诊</text>
+      </svg>
+      <div className="dept-list">
+        {deptData.map((d, i) => (
+          <div key={i} className="dept-item">
+            <div className="dept-dot" style={{background: d.color}} />
+            <span className="dept-name">{d.name}</span>
+            <span className="dept-count">{d.count}</span>
+            <span className="dept-pct">{d.pct}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* ─── Main App ─── */
+const App = () => {
+  const [activeNav, setActiveNav] = useState("dashboard");
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+
+  const navItems = [
+    { id: "dashboard", label: "总览仪表盘", icon: "home" },
+    { id: "patients",  label: "患者管理",   icon: "users", badge: 12 },
+    { id: "schedule",  label: "排班预约",   icon: "calendar" },
+    { id: "vitals",    label: "生命体征",   icon: "activity" },
+    { id: "pharmacy",  label: "药品管理",   icon: "pill" },
+    { id: "records",   label: "病历档案",   icon: "clipboard" },
+  ];
+
+  return (
+    <div className="layout">
+      {/* Sidebar */}
+      <aside className="sidebar" role="navigation" aria-label="主导航">
+        <div className="sidebar-logo">
+          <div className="logo-icon" aria-hidden="true">
+            <Icon name="crosshair" size={18} color="#fff" />
+          </div>
+          <div>
+            <div className="logo-text">HealthDash</div>
+            <div className="logo-sub">医疗管理平台</div>
+          </div>
+        </div>
+
+        <div className="sidebar-section">
+          <div className="sidebar-label">主菜单</div>
+          {navItems.map(item => (
+            <div key={item.id} className={`nav-item ${activeNav === item.id ? 'active' : ''}`}
+              onClick={() => setActiveNav(item.id)}
+              role="button" tabIndex={0}
+              onKeyDown={e => e.key === 'Enter' && setActiveNav(item.id)}
+              aria-current={activeNav === item.id ? 'page' : undefined}>
+              <Icon name={item.icon} size={17} />
+              {item.label}
+              {item.badge && <span className="nav-badge" aria-label={`${item.badge}条新消息`}>{item.badge}</span>}
+            </div>
+          ))}
+        </div>
+
+        <div className="sidebar-section">
+          <div className="sidebar-label">系统</div>
+          <div className="nav-item" role="button" tabIndex={0}>
+            <Icon name="settings" size={17} />设置
+          </div>
+        </div>
+
+        <div className="sidebar-bottom">
+          <div className="user-card" role="button" tabIndex={0} aria-label="用户设置">
+            <div className="avatar" aria-hidden="true">李</div>
+            <div>
+              <div className="user-name">李医生</div>
+              <div className="user-role">主治医师 · 内科</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="main">
+        {/* Header */}
+        <header className="header">
+          <div>
+            <div className="header-title">总览仪表盘</div>
+          </div>
+          <div className="header-date" aria-label={`今天是${dateStr}`}>{dateStr}</div>
+          <div className="search-box" role="search">
+            <Icon name="search" size={15} color="#94A3B8" />
+            <input type="search" placeholder="搜索患者、医生、病历…" aria-label="搜索" />
+          </div>
+          <button className="icon-btn" aria-label="通知（4条未读）">
+            <Icon name="bell" size={17} color="#475569" />
+            <span className="notif-dot" aria-hidden="true" />
+          </button>
+          <button className="icon-btn" aria-label="系统设置">
+            <Icon name="settings" size={17} color="#475569" />
+          </button>
+        </header>
+
+        {/* Content */}
+        <div className="content">
+          {/* KPI Cards */}
+          <section aria-label="关键指标" className="kpi-grid">
+            {kpiData.map((k, i) => (
+              <div key={i} className="kpi-card">
+                <div className="kpi-top">
+                  <div className="kpi-icon" style={{background: k.bg}}>
+                    <Icon name={k.icon} size={20} color={k.iconColor} />
+                  </div>
+                  <div className={`kpi-badge ${k.trend === 'up' ? (k.label === '危重警报' ? 'danger' : 'success') : 'info'}`}
+                    style={{
+                      background: k.trend === 'up' ? (k.label === '危重警报' ? '#FEE2E2' : '#D1FAE5') : '#EFF6FF',
+                      color: k.trend === 'up' ? (k.label === '危重警报' ? '#DC2626' : '#059669') : '#2563EB'
+                    }}>
+                    <Icon name={k.trend === 'up' ? 'arrowup' : 'arrowdown'} size={11}
+                      color={k.trend === 'up' ? (k.label === '危重警报' ? '#DC2626' : '#059669') : '#2563EB'} />
+                    {Math.abs(k.change)}
+                  </div>
+                </div>
+                <div className="kpi-value">{k.value}<span style={{fontSize:14,fontWeight:500,marginLeft:4,color:'#64748B'}}>{k.unit}</span></div>
+                <div className="kpi-label">{k.label}</div>
+              </div>
+            ))}
+          </section>
+
+          {/* Charts Row */}
+          <div className="charts-row">
+            <section className="card" aria-label="每周就诊趋势">
+              <div className="card-header">
+                <div>
+                  <div className="card-title">每周就诊趋势</div>
+                  <div className="card-subtitle">本周 vs 上周对比</div>
+                </div>
+                <button className="icon-btn" aria-label="更多选项" style={{border:'none',background:'none',cursor:'pointer'}}>
+                  <Icon name="more" size={18} color="#94A3B8" />
+                </button>
+              </div>
+              <div className="card-body">
+                <LineChart />
+              </div>
+            </section>
+
+            <section className="card" aria-label="科室就诊分布">
+              <div className="card-header">
+                <div>
+                  <div className="card-title">科室分布</div>
+                  <div className="card-subtitle">今日就诊科室占比</div>
+                </div>
+              </div>
+              <div className="card-body">
+                <DonutChart />
+              </div>
+            </section>
+          </div>
+
+          {/* Bottom Row */}
+          <div className="bottom-row">
+            {/* Patient Table */}
+            <section className="card" aria-label="患者列表">
+              <div className="card-header" style={{paddingBottom:0}}>
+                <div>
+                  <div className="card-title">今日患者</div>
+                  <div className="card-subtitle">共 {patients.length} 名待诊患者</div>
+                </div>
+                <button style={{
+                  display:'flex', alignItems:'center', gap:6,
+                  background:'#1E40AF', color:'#fff', border:'none',
+                  borderRadius:8, padding:'8px 14px', fontSize:13, fontWeight:600,
+                  cursor:'pointer', transition:'background 0.15s'
+                }} aria-label="新增患者"
+                  onMouseOver={e => e.currentTarget.style.background='#1D4ED8'}
+                  onMouseOut={e => e.currentTarget.style.background='#1E40AF'}>
+                  <Icon name="plus" size={15} color="#fff" />
+                  新增患者
+                </button>
+              </div>
+              <div className="card-body" style={{padding:'12px 0 0 0'}}>
+                <div className="table-wrap">
+                  <table aria-label="患者信息表">
+                    <thead>
+                      <tr>
+                        <th scope="col">患者</th>
+                        <th scope="col">科室</th>
+                        <th scope="col">主治医生</th>
+                        <th scope="col">生命体征</th>
+                        <th scope="col">状态</th>
+                        <th scope="col">就诊时间</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {patients.map((p, i) => (
+                        <tr key={i}>
+                          <td>
+                            <div className="patient-name">{p.name}</div>
+                            <div className="patient-id">{p.id} · {p.age}岁</div>
+                          </td>
+                          <td>{p.dept}</td>
+                          <td>{p.doctor}</td>
+                          <td>
+                            <span className="vital-chip" title="心率">♥ {p.hr}</span>
+                            {' '}
+                            <span className="vital-chip" title="血压" style={{background:'#FEF3C7',color:'#92400E'}}>{p.bp}</span>
+                            {' '}
+                            <span className="vital-chip" title="体温" style={{background:'#D1FAE5',color:'#065F46'}}>{p.temp}°</span>
+                          </td>
+                          <td>
+                            <span className={`status-badge ${p.status}`} role="status">
+                              <span className="status-dot" aria-hidden="true" />
+                              {p.status === 'stable' ? '稳定' : p.status === 'warning' ? '关注' : '危重'}
+                            </span>
+                          </td>
+                          <td style={{fontFamily:'Fira Code',fontSize:12,color:'#64748B'}}>{p.time}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            {/* Alerts */}
+            <section className="card" aria-label="实时警报">
+              <div className="card-header">
+                <div>
+                  <div className="card-title">实时警报</div>
+                  <div className="card-subtitle">今日 5 条提醒</div>
+                </div>
+                <span style={{
+                  background:'#FEE2E2', color:'#DC2626',
+                  fontSize:11, fontWeight:700,
+                  padding:'3px 8px', borderRadius:20
+                }} aria-label="2条危急警报">2 危急</span>
+              </div>
+              <div className="card-body">
+                <div className="alerts-list" role="list">
+                  {alerts.map((a, i) => (
+                    <div key={i} className={`alert-item ${a.type}`} role="listitem" tabIndex={0}
+                      aria-label={`${a.type === 'critical' ? '危急' : a.type === 'warning' ? '警告' : '信息'}：${a.title}`}>
+                      <div className="alert-icon" aria-hidden="true">
+                        <Icon name={a.icon} size={16}
+                          color={a.type === 'critical' ? '#DC2626' : a.type === 'warning' ? '#D97706' : '#2563EB'} />
+                      </div>
+                      <div>
+                        <div className="alert-title">{a.title}</div>
+                        <div className="alert-desc">{a.desc}</div>
+                        <div className="alert-time">{a.time}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

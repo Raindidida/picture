@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Asia Pacific 3D Blocks Map</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#f2f2f2;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-start;
+  min-height:100vh; padding:20px; gap:16px;
+  font-family:'Helvetica Neue',Arial,sans-serif;
+}
+canvas { display:block; background:#fff; box-shadow:0 2px 20px rgba(0,0,0,.10); }
+.panel {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+  gap:10px 20px; background:#fff; border:1px solid #e0e0e0;
+  border-radius:12px; padding:14px 20px;
+  box-shadow:0 1px 8px rgba(0,0,0,.06);
+  max-width:960px; width:100%;
+}
+.ctrl { display:flex; flex-direction:column; align-items:center; gap:5px; }
+.ctrl span { font-size:11px; color:#666; white-space:nowrap; }
+.ctrl .val { font-size:11px; color:#aaa; min-width:34px; text-align:center; }
+.ctrl input[type=range] { width:120px; accent-color:#111; cursor:pointer; }
+.div { width:1px; height:38px; background:#e8e8e8; align-self:center; }
+.btn {
+  display:flex; align-items:center; gap:7px;
+  background:#111; color:#fff; border:none; border-radius:8px;
+  padding:9px 18px; font-size:12px; font-weight:500;
+  letter-spacing:.04em; cursor:pointer; transition:background .15s;
+}
+.btn:hover { background:#333; }
+.btn svg { width:14px; height:14px; fill:#fff; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="panel">
+  <div class="ctrl"><span>水平旋转</span><input type="range" id="sRotH" min="-60" max="60" value="0"><span class="val" id="vRotH">0°</span></div>
+  <div class="div"></div>
+  <div class="ctrl"><span>透视仰角</span><input type="range" id="sRotV" min="5" max="70" value="30"><span class="val" id="vRotV">30°</span></div>
+  <div class="div"></div>
+  <div class="ctrl"><span>方块高度</span><input type="range" id="sDepth" min="1" max="30" value="11"><span class="val" id="vDepth">11</span></div>
+  <div class="div"></div>
+  <div class="ctrl"><span>方块密度</span><input type="range" id="sSize" min="10" max="50" value="26"><span class="val" id="vSize">26</span></div>
+  <div class="div"></div>
+  <div class="ctrl"><span>线条粗细</span><input type="range" id="sLW" min="0.3" max="4" step="0.1" value="1"><span class="val" id="vLW">1</span></div>
+  <div class="div"></div>
+  <div class="ctrl"><span>虚线长度</span><input type="range" id="sDash" min="1" max="12" step="0.5" value="3"><span class="val" id="vDash">3</span></div>
+  <div class="div"></div>
+  <div class="ctrl"><span>虚线间距</span><input type="range" id="sGap" min="1" max="12" step="0.5" value="3"><span class="val" id="vGap">3</span></div>
+  <div class="div"></div>
+  <button class="btn" id="dlBtn">
+    <svg viewBox="0 0 24 24"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/></svg>
+    下载 SVG
+  </button>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.width = 900; canvas.height = 820;
+
+let BW=26, BD=11, rotH=0, rotV=30, lineW=1, dashLen=3, dashGap=3;
+
+const OX=60, OY=50;
+
+function getIso(){
+  const vr=(rotV*Math.PI)/180, hr=(rotH*Math.PI)/180;
+  const a=BW/2;
+  const rx= a*Math.cos(hr-Math.PI/6);
+  const ry= a*Math.sin(vr)*Math.cos(hr-Math.PI/6);
+  const lx=-a*Math.cos(hr+Math.PI/6);
+  const ly= a*Math.sin(vr)*Math.cos(hr+Math.PI/6);
+  return {rx,ry,lx,ly};
+}
+
+function isoPos(c,r){
+  const {rx,ry,lx,ly}=getIso();
+  return [OX+c*rx*2+r*lx*2, OY+c*ry*2+r*ly*2];
+}
+
+function face(pts){
+  ctx.beginPath();
+  ctx.moveTo(...pts[0]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(...pts[i]);
+  ctx.closePath();
+  ctx.fillStyle='#fff'; ctx.fill();
+  ctx.setLineDash([dashLen,dashGap]);
+  ctx.strokeStyle='#000'; ctx.lineWidth=lineW; ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function block(c,r){
+  const [cx,cy]=isoPos(c,r);
+  const {rx,ry,lx,ly}=getIso();
+  const pT=[cx,cy], pR=[cx+rx,cy+ry];
+  const pB=[cx+rx+lx,cy+ry+ly], pL=[cx+lx,cy+ly];
+  face([pT,pR,pB,pL]);
+  face([pL,pB,[pB[0],pB[1]+BD],[pL[0],pL[1]+BD]]);
+  face([pB,pR,[pR[0],pR[1]+BD],[pB[0],pB[1]+BD]]);
+}
+
+const grid=[
+[0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+[0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+[0,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0],
+];
+const ROWS=grid.length, COLS=grid[0].length;
+
+function render(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  for(let r=ROWS-1;r>=0;r--)
+    for(let c=COLS-1;c>=0;c--)
+      if(grid[r][c]) block(c,r);
+  ctx.setLineDash([]);
+  ctx.fillStyle='#111';
+  ctx.font='500 13px Helvetica Neue,Arial,sans-serif';
+  ctx.fillText('ASIA PACIFIC',30,canvas.height-20);
+}
+
+render();
+
+function bind(id,vId,suffix,key,fn){
+  const sl=document.getElementById(id);
+  const vl=document.getElementById(vId);
+  sl.addEventListener('input',()=>{
+    window[key]=fn(sl.value);
+    vl.textContent=sl.value+(suffix||'');
+    render();
+  });
+}
+bind('sRotH','vRotH','deg','rotH',Number);
+bind('sRotV','vRotV','deg','rotV',Number);
+bind('sDepth','vDepth','','BD',Number);
+bind('sSize','vSize','','BW',Number);
+bind('sLW','vLW','','lineW',Number);
+bind('sDash','vDash','','dashLen',Number);
+bind('sGap','vGap','','dashGap',Number);
+
+document.getElementById('dlBtn').addEventListener('click',()=>{
+  const W=canvas.width,H=canvas.height;
+  const parts=[
+    '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">',
+    '<rect width="'+W+'" height="'+H+'" fill="white"/>'
+  ];
+  function fsvg(pts){
+    const d=pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')+' Z';
+    return '<path d="'+d+'" fill="white" stroke="black" stroke-width="'+lineW+'" stroke-dasharray="'+dashLen+','+dashGap+'"/>';
+  }
+  function bsvg(c,r){
+    const [cx,cy]=isoPos(c,r);
+    const {rx,ry,lx,ly}=getIso();
+    const pT=[cx,cy],pR=[cx+rx,cy+ry],pB=[cx+rx+lx,cy+ry+ly],pL=[cx+lx,cy+ly];
+    return fsvg([pT,pR,pB,pL])+
+           fsvg([pL,pB,[pB[0],pB[1]+BD],[pL[0],pL[1]+BD]])+
+           fsvg([pB,pR,[pR[0],pR[1]+BD],[pB[0],pB[1]+BD]]);
+  }
+  for(let r=ROWS-1;r>=0;r--)
+    for(let c=COLS-1;c>=0;c--)
+      if(grid[r][c]) parts.push(bsvg(c,r));
+  parts.push('<text x="30" y="'+(H-20)+'" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="500" letter-spacing="2" fill="#111">ASIA PACIFIC</text>');
+  parts.push('</svg>');
+  const blob=new Blob([parts.join('\n')],{type:'image/svg+xml'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='asia-pacific-3d.svg';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>

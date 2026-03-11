@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OPC Commons — Sponsorship 2026</title>
+<style>
+/* ─── Local fonts ─── */
+@font-face {
+  font-family: 'Suisse';
+  src: local('SuisseScreenTrial-Regular'),
+       local('Suisse Screen Trial Regular'),
+       local('SuisseScreen-Regular'),
+       local('SuisseIntl-Regular'),
+       local('Suisse Int\'l Regular'),
+       local('SuisseIntlTrial-Regular');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Suisse';
+  src: local('SuisseScreenTrial-Light'),
+       local('Suisse Screen Trial Light'),
+       local('SuisseIntl-Light');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'PPFraktion';
+  src: local('PPFraktionMono-Regular'),
+       local('PP Fraktion Mono Regular'),
+       local('PPFraktionMono Regular'),
+       local('FraktionMono-Regular');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Design System ── */
+:root {
+  --bg:   #F7F5F2;
+  --ink:  #0A0908;
+  --dim:  rgba(10,9,8,0.13);
+  --light:rgba(10,9,8,0.06);
+  --red:  #C84A2A;
+  /* 主标题 + 副标题 → SuisseScreenTrial */
+  --f-h: 'Suisse', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  /* 正文 → PPFraktion Mono */
+  --f-m: 'PPFraktion', 'Space Mono', 'Courier New', monospace;
+  /* 统一：正文也用 --f-m */
+  --f-s: 'PPFraktion', 'Space Mono', 'Courier New', monospace;
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100%;
+  overflow:hidden;
+  background:#1a1a1a;
+  font-family: var(--f-s);
+}
+
+/* ── DOT CANVAS BG ── */
+#dot-canvas {
+  position:fixed; inset:0;
+  width:100%; height:100%;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── STAGE ── */
+.deck { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+.stage { position:absolute; width:1600px; height:900px; transform-origin:top left; }
+
+.slide {
+  position:absolute; inset:0;
+  background-color: var(--bg);
+  background-image: var(--dot-url, none);
+  background-size: 640px 640px;
+  background-repeat: repeat;
+  opacity:0; pointer-events:none;
+  transition: opacity .35s ease;
+  overflow:hidden;
+}
+.slide.active { opacity:1; pointer-events:all; }
+
+/* thin outer frame */
+.slide::after {
+  content:''; position:absolute; inset:0;
+  border: 1px solid rgba(17,17,17,0.12);
+  pointer-events:none; z-index:100;
+}
+
+/* ── GLOBAL CHROME ── */
+.wordmark {
+  position:absolute; top:36px; left:54px;
+  font-family:var(--f-m); font-size:10px; letter-spacing:4px;
+  text-transform:uppercase; color:var(--ink); opacity:.3;
+  z-index:50;
+}
+.slide-counter {
+  position:absolute; bottom:36px; right:54px;
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  color:var(--ink); opacity:.25; z-index:50;
+}
+.lang {
+  position:absolute; top:36px; right:54px;
+  display:flex; gap:16px; z-index:50;
+}
+.lang span {
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--ink); opacity:.25;
+  cursor:pointer;
+}
+.lang span.active { opacity:.7; border-bottom:1px solid var(--ink); }
+
+/* ── TYPOGRAPHY ── */
+.tag {
+  font-family:var(--f-m); font-size:9px; letter-spacing:5px;
+  text-transform:uppercase; color:var(--ink); opacity:.35;
+  margin-bottom:28px; display:block;
+}
+.rule {
+  width:44px; height:1px;
+  background:var(--ink); opacity:.2;
+  margin:32px 0;
+}
+.rule-full {
+  width:100%; height:1px;
+  background:var(--ink); opacity:.1;
+}
+.body {
+  font-family:var(--f-m); font-size:13px; font-weight:400;
+  line-height:2.0; color:var(--ink); opacity:.5;
+}
+.num-tag {
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  color:var(--ink); opacity:.3;
+}
+
+/* ── DECORATIVE CORNER MARKS ── */
+.corner-marks { position:absolute; inset:0; pointer-events:none; z-index:40; }
+.corner-marks::before,
+.corner-marks::after,
+.corner-marks b::before,
+.corner-marks b::after {
+  content:''; position:absolute; background:var(--ink); opacity:.1;
+}
+.corner-marks::before  { width:1px; height:18px; top:18px; left:28px; }
+.corner-marks::after   { height:1px; width:18px; top:28px; left:18px; }
+.corner-marks b::before { width:1px; height:18px; bottom:18px; right:28px; }
+.corner-marks b::after  { height:1px; width:18px; bottom:28px; right:18px; }
+
+/* ═══════════════════════════════════════════
+   SLIDE 01 — COVER
+═══════════════════════════════════════════ */
+#s1 {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+}
+#s1 .left {
+  display:flex; flex-direction:column;
+  justify-content:flex-end;
+  padding:0 72px 92px 72px;
+  border-right:1px solid var(--dim);
+}
+#s1 .right {
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  padding:72px;
+  position:relative;
+}
+#s1 h1 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:108px; line-height:.94; letter-spacing:-2px;
+  color:var(--ink); margin-bottom:48px;
+}
+#s1 .deck-meta {
+  display:flex; flex-direction:column; gap:20px;
+  padding-top:32px; border-top:1px solid var(--dim);
+}
+#s1 .deck-meta p {
+  font-family:var(--f-s); font-size:14px; font-weight:300;
+  color:var(--ink); opacity:.45; line-height:1.6;
+}
+#s1 .year {
+  position:absolute; bottom:72px; right:72px;
+  font-family:var(--f-h); font-weight:400; font-size:180px;
+  line-height:1; color:var(--ink); opacity:.05; letter-spacing:-6px;
+  user-select:none;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 02 — THE SHIFT
+═══════════════════════════════════════════ */
+#s2 {
+  display:flex; flex-direction:column;
+  padding:72px;
+}
+#s2 .top {
+  flex:1; display:flex; align-items:flex-start; gap:80px;
+}
+#s2 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:88px; line-height:.94; letter-spacing:-2px;
+  color:var(--ink); flex:0 0 auto;
+}
+#s2 .right-col { flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:8px; }
+#s2 .stats-row {
+  display:flex; gap:0; margin-bottom:48px;
+  border-top:1px solid var(--dim);
+}
+#s2 .stat {
+  flex:1; padding:28px 32px 0 0;
+}
+#s2 .stat + .stat { border-left:1px solid var(--dim); padding-left:32px; }
+#s2 .stat .n {
+  font-family:var(--f-h); font-weight:400;
+  font-size:72px; line-height:1; letter-spacing:-2px;
+  color:var(--ink); margin-bottom:6px;
+}
+#s2 .stat .l {
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--ink); opacity:.3;
+}
+/* wave container */
+#s2 .wave-row {
+  border-top:1px solid var(--dim); padding-top:32px;
+  display:flex; align-items:center; gap:24px;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 03 — WHAT IS OPC COMMONS
+═══════════════════════════════════════════ */
+#s3 {
+  display:grid; grid-template-columns:480px 1fr;
+}
+#s3 .left {
+  border-right:1px solid var(--dim);
+  padding:72px 56px 72px 72px;
+  display:flex; flex-direction:column;
+}
+#s3 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:58px; line-height:.96; letter-spacing:-1.5px;
+  color:var(--ink); flex:1;
+}
+#s3 .right { padding:72px 72px 72px 64px; display:flex; flex-direction:column; gap:0; }
+#s3 .item {
+  display:flex; gap:32px; padding:28px 0;
+  border-bottom:1px solid var(--dim);
+  align-items:flex-start;
+}
+#s3 .item:first-child { border-top:1px solid var(--dim); }
+#s3 .item-n {
+  font-family:var(--f-h); font-weight:400;
+  font-size:52px; line-height:1; color:var(--ink); opacity:.12;
+  flex-shrink:0; width:56px;
+}
+#s3 .item-body { flex:1; padding-top:8px; }
+#s3 .item-title {
+  font-family:var(--f-h); font-weight:400;
+  font-size:28px; line-height:1.1; color:var(--ink);
+  margin-bottom:10px;
+}
+#s3 .item-desc {
+  font-family:var(--f-s); font-size:14px; font-weight:300;
+  line-height:1.8; color:var(--ink); opacity:.5;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 04 — GLOBAL NETWORK
+═══════════════════════════════════════════ */
+#s4 {
+  display:grid; grid-template-columns:1fr 1fr;
+}
+#s4 .left {
+  border-right:1px solid var(--dim);
+  padding:72px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+#s4 .big-n {
+  font-family:var(--f-h); font-weight:300;
+  font-size:260px; line-height:.85; letter-spacing:-12px;
+  color:var(--ink); opacity:.08; user-select:none;
+  position:absolute; bottom:40px; left:48px;
+}
+#s4 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:76px; line-height:.94; letter-spacing:-2px;
+  color:var(--ink);
+}
+#s4 .right { padding:72px 72px 72px 64px; display:flex; flex-direction:column; }
+#s4 .city-grid {
+  flex:1; display:grid; grid-template-columns:1fr 1fr;
+  gap:0; border-top:1px solid var(--dim); margin-top:32px;
+}
+#s4 .city {
+  padding:12px 0; border-bottom:1px solid var(--dim);
+  font-family:var(--f-s); font-size:14px; font-weight:300;
+  color:var(--ink); opacity:.6;
+  display:flex; align-items:center; gap:10px;
+}
+#s4 .city:nth-child(odd) { border-right:1px solid var(--dim); padding-right:20px; }
+#s4 .city:nth-child(even) { padding-left:20px; }
+.dot-red {
+  width:5px; height:5px; background:var(--red);
+  border-radius:50%; flex-shrink:0;
+}
+#s4 .summit-box {
+  margin-top:auto; padding:24px 28px;
+  border:1px solid var(--ink);
+}
+#s4 .summit-box .st {
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--ink); opacity:.3; margin-bottom:8px;
+}
+#s4 .summit-box .sn {
+  font-family:var(--f-h); font-weight:400; font-size:22px; color:var(--ink);
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 05 — THE ROOM
+═══════════════════════════════════════════ */
+#s5 {
+  display:flex; flex-direction:column; padding:72px;
+}
+#s5 .top {
+  display:flex; align-items:baseline; gap:48px; margin-bottom:48px;
+}
+#s5 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:80px; line-height:.94; letter-spacing:-2px;
+  color:var(--ink); flex:0 0 auto;
+}
+#s5 .sub {
+  font-family:var(--f-s); font-size:15px; font-weight:300;
+  color:var(--ink); opacity:.45; line-height:1.8;
+  max-width:420px; align-self:flex-end; padding-bottom:12px;
+}
+#s5 .grid {
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:0; border-top:1px solid var(--dim); flex:1;
+}
+#s5 .cell {
+  padding:28px 24px; border-right:1px solid var(--dim);
+  display:flex; flex-direction:column;
+}
+#s5 .cell:last-child { border-right:none; }
+#s5 .cell-n {
+  font-family:var(--f-m); font-size:9px; letter-spacing:2px;
+  color:var(--ink); opacity:.25; margin-bottom:16px;
+}
+#s5 .cell-t {
+  font-family:var(--f-h); font-weight:400; font-size:20px;
+  color:var(--ink); line-height:1.2; margin-bottom:12px;
+}
+#s5 .cell-d {
+  font-family:var(--f-s); font-size:12px; font-weight:300;
+  color:var(--ink); opacity:.45; line-height:1.7;
+  margin-top:auto;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 06 — TRACK RECORD
+═══════════════════════════════════════════ */
+#s6 {
+  display:grid; grid-template-columns:1fr 1fr;
+}
+#s6 .left {
+  border-right:1px solid var(--dim);
+  padding:72px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+#s6 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:68px; line-height:.94; letter-spacing:-1.5px;
+  color:var(--ink);
+}
+#s6 .stats {
+  display:flex; flex-direction:column; gap:0;
+  border-top:1px solid var(--dim);
+}
+#s6 .stat-row {
+  display:flex; align-items:baseline; gap:24px;
+  padding:24px 0; border-bottom:1px solid var(--dim);
+}
+#s6 .stat-row .n {
+  font-family:var(--f-h); font-weight:400;
+  font-size:56px; line-height:1; letter-spacing:-2px; color:var(--ink);
+  flex-shrink:0; width:130px;
+}
+#s6 .stat-row .l {
+  font-family:var(--f-s); font-size:13px; font-weight:300;
+  color:var(--ink); opacity:.45; line-height:1.5;
+}
+#s6 .right {
+  padding:72px;
+  display:flex; flex-direction:column;
+}
+#s6 .founder-block {
+  border-top:1px solid var(--dim); padding-top:36px; margin-top:auto;
+}
+#s6 .founder-quote {
+  font-family:var(--f-h); font-weight:400;
+  font-size:24px; line-height:1.55; color:var(--ink); opacity:.7;
+  margin-bottom:28px; letter-spacing:-.3px;
+}
+#s6 .founder-name {
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--ink); opacity:.4;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 07 — TIERS
+═══════════════════════════════════════════ */
+#s7 { display:flex; flex-direction:column; padding:56px 72px 64px; }
+#s7 .head-row {
+  display:flex; align-items:baseline; gap:48px;
+  margin-bottom:40px;
+}
+#s7 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:60px; line-height:.95; letter-spacing:-1.5px;
+  color:var(--ink);
+}
+#s7 .sub {
+  font-family:var(--f-s); font-size:14px; font-weight:300;
+  color:var(--ink); opacity:.4; align-self:flex-end;
+  padding-bottom:8px;
+}
+#s7 .tiers {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:0; flex:1;
+  border:1px solid var(--dim);
+}
+.tier {
+  padding:32px 36px 40px;
+  border-right:1px solid var(--dim);
+  display:flex; flex-direction:column;
+}
+.tier:last-child {
+  border-right:none;
+  background:var(--ink);
+}
+.tier-label {
+  font-family:var(--f-m); font-size:8px; letter-spacing:4px;
+  text-transform:uppercase; color:var(--ink); opacity:.3;
+  margin-bottom:4px;
+}
+.tier:last-child .tier-label { color:#fff; opacity:.3; }
+.tier-lim {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--f-m); font-size:8px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--red);
+  margin-bottom:6px;
+}
+.tier-lim::before {
+  content:''; width:5px; height:5px;
+  background:var(--red); border-radius:50%;
+}
+.tier-name {
+  font-family:var(--f-h); font-weight:400;
+  font-size:28px; line-height:1.1; color:var(--ink);
+  margin-bottom:4px;
+}
+.tier:last-child .tier-name { color:#fff; }
+.tier-price {
+  font-family:var(--f-m); font-size:10px; letter-spacing:2px;
+  color:var(--ink); opacity:.35;
+  margin-bottom:24px; padding-bottom:20px;
+  border-bottom:1px solid var(--dim);
+}
+.tier:last-child .tier-price { color:#fff; border-bottom-color:rgba(255,255,255,.12); }
+.tier-feat {
+  font-family:var(--f-s); font-size:12px; font-weight:300;
+  color:var(--ink); opacity:.5; line-height:1.7;
+  padding:7px 0; border-bottom:1px solid var(--light);
+  display:flex; gap:10px;
+}
+.tier:last-child .tier-feat { color:#fff; border-bottom-color:rgba(255,255,255,.07); opacity:.65; }
+.tier-feat::before {
+  content:'—'; opacity:.3; flex-shrink:0;
+  font-family:var(--f-m); font-size:11px;
+}
+.tier-note {
+  margin-top:auto; padding-top:20px;
+  font-family:var(--f-m); font-size:8px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--ink); opacity:.25;
+  line-height:1.7;
+}
+.tier:last-child .tier-note { color:#fff; }
+
+/* ═══════════════════════════════════════════
+   SLIDE 08 — ROADMAP
+═══════════════════════════════════════════ */
+#s8 {
+  display:grid; grid-template-columns:500px 1fr;
+}
+#s8 .left {
+  border-right:1px solid var(--dim);
+  padding:72px;
+  display:flex; flex-direction:column;
+}
+#s8 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:68px; line-height:.94; letter-spacing:-1.5px;
+  color:var(--ink);
+}
+#s8 .right { padding:72px 72px 72px 64px; display:flex; flex-direction:column; justify-content:space-between; }
+#s8 .milestone {
+  display:flex; gap:32px; align-items:flex-start;
+  padding:28px 0; border-bottom:1px solid var(--dim);
+}
+#s8 .milestone:first-child { border-top:1px solid var(--dim); }
+#s8 .m-num {
+  font-family:var(--f-h); font-weight:400;
+  font-size:40px; line-height:1; color:var(--ink); opacity:.1;
+  flex-shrink:0; width:48px;
+}
+#s8 .m-body { flex:1; padding-top:4px; }
+#s8 .m-date {
+  font-family:var(--f-m); font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--ink); opacity:.3;
+  margin-bottom:6px;
+}
+#s8 .m-title {
+  font-family:var(--f-h); font-weight:400; font-size:24px;
+  color:var(--ink); margin-bottom:6px;
+}
+#s8 .m-desc {
+  font-family:var(--f-s); font-size:13px; font-weight:300;
+  color:var(--ink); opacity:.45; line-height:1.6;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 09 — LET'S TALK
+═══════════════════════════════════════════ */
+#s9 {
+  background: var(--ink) !important;
+  display:grid; grid-template-columns:1fr 1fr;
+}
+#s9 .left {
+  border-right:1px solid rgba(255,255,255,.07);
+  padding:72px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+#s9 h2 {
+  font-family:var(--f-h); font-weight:400;
+  font-size:100px; line-height:.92; letter-spacing:-2px;
+  color:#fff;
+}
+#s9 .right {
+  padding:72px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
+#s9 .contact-block {
+  margin-bottom:auto; padding-top:120px;
+}
+#s9 .c-label {
+  font-family:var(--f-m); font-size:9px; letter-spacing:4px;
+  text-transform:uppercase; color:#fff; opacity:.25;
+  margin-bottom:20px;
+}
+#s9 .c-val {
+  font-family:var(--f-h); font-weight:400; font-size:24px;
+  color:#fff; opacity:.7; line-height:2;
+}
+#s9 .tagline {
+  font-family:var(--f-m); font-size:9px; letter-spacing:5px;
+  text-transform:uppercase; color:#fff; opacity:.2;
+  margin-top:auto;
+}
+/* Pixel smiley */
+#s9 .pxface {
+  display:block; margin-bottom:56px;
+}
+#s9 .rule { background:rgba(255,255,255,.15); }
+#s9 .wordmark { color:#fff; opacity:.2; }
+#s9 .slide-counter { color:#fff; opacity:.2; }
+#s9 .corner-marks::before,
+#s9 .corner-marks::after,
+#s9 .corner-marks b::before,
+#s9 .corner-marks b::after { background:#fff; }
+
+/* ── NAV ── */
+.nav {
+  position:fixed; bottom:18px; left:50%;
+  transform:translateX(-50%);
+  display:flex; align-items:center; gap:12px;
+  z-index:999;
+}
+.nb {
+  width:34px; height:34px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  color:#fff; font-size:14px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s; user-select:none;
+  font-family:var(--f-m);
+}
+.nb:hover { background:rgba(255,255,255,.14); }
+.np {
+  font-family:var(--f-m); font-size:10px; letter-spacing:3px;
+  color:rgba(255,255,255,.3); min-width:52px; text-align:center;
+}
+</style>
+</head>
+<body>
+
+<!-- shared SVG symbol -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <symbol id="px-face" viewBox="0 0 60 48">
+    <rect x="6"  y="6"  width="12" height="12"/>
+    <rect x="42" y="6"  width="12" height="12"/>
+    <rect x="6"  y="30" width="48" height="12"/>
+  </symbol>
+</defs>
+</svg>
+
+<div class="deck">
+<div class="stage" id="stage">
+
+<!-- ═══════════════════════════════════════════════════
+     01 · COVER
+═══════════════════════════════════════════════════ -->
+<div class="slide active" id="s1">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+  <div class="lang"><span class="active">EN</span><span>ZH</span></div>
+
+  <div class="left">
+    <div>
+      <span class="tag">Sponsorship Overview · 2026</span>
+      <h1>One is<br>all you<br>need.</h1>
+    </div>
+    <div class="deck-meta">
+      <p>Global Meetup Series across 13 cities.<br>
+         The infrastructure for the one-person company era.</p>
+      <p style="opacity:.25;font-size:12px;font-family:var(--f-m);letter-spacing:2px;">
+        OPC COMMONS · PARTNERSHIP DECK
+      </p>
+    </div>
+  </div>
+
+  <div class="right">
+    <!-- editorial large pixel smiley -->
+    <svg width="320" height="256" fill="var(--ink)" opacity=".07">
+      <use href="#px-face" width="320" height="256"/>
+    </svg>
+    <div class="year">2026</div>
+  </div>
+
+  <div class="slide-counter">01 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     02 · THE SHIFT
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="top" style="padding:72px 72px 0; flex:1;">
+    <div>
+      <span class="tag">02 — The Shift</span>
+      <h2>The company<br>is compressing<br>to its core.</h2>
+    </div>
+    <div class="right-col">
+      <div class="stats-row">
+        <div class="stat">
+          <div class="n">50</div>
+          <div class="l">Traditional team</div>
+        </div>
+        <div class="stat">
+          <div class="n">10</div>
+          <div class="l">Early startup</div>
+        </div>
+        <div class="stat">
+          <div class="n">1</div>
+          <div class="l">One person company</div>
+        </div>
+      </div>
+      <div class="body">
+        AI is compressing the company to its irreducible core.<br>
+        What took 50 people now takes 10. What took 10 now takes 1.<br>
+        The One Person Company isn't a niche —<br>
+        it's the future shape of most businesses.
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG compression curve -->
+  <div style="padding:32px 72px 72px; flex-shrink:0;">
+    <div class="rule-full" style="margin-bottom:32px;"></div>
+    <svg viewBox="0 0 1456 110" width="1456" height="110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- dashed baseline -->
+      <line x1="0" y1="55" x2="1456" y2="55" stroke="#111" stroke-width=".4" stroke-dasharray="2 6" opacity=".15"/>
+      <!-- main compression curve (decaying sine) -->
+      <path d="
+        M 0,55
+        C 50,10 130,0 200,20
+        C 270,40 290,80 360,90
+        C 430,100 460,50 520,35
+        C 580,20 600,10 660,18
+        C 720,26 730,68 790,76
+        C 850,84 870,50 930,42
+        C 990,34 1000,26 1060,30
+        C 1120,34 1125,62 1175,66
+        C 1225,70 1240,46 1290,42
+        C 1340,38 1360,48 1400,51
+        C 1420,52 1440,54 1456,55
+      " stroke="#111111" stroke-width="1.5" opacity=".7"/>
+      <!-- labels -->
+      <text x="4"    y="10"  font-family="'Space Mono','Courier New',monospace" font-size="9" fill="#111" opacity=".35" letter-spacing="1">50+</text>
+      <text x="680"  y="12"  font-family="'Space Mono','Courier New',monospace" font-size="9" fill="#111" opacity=".35" letter-spacing="1">10</text>
+      <text x="1430" y="46"  font-family="'Space Mono','Courier New',monospace" font-size="9" fill="#111" opacity=".5"  letter-spacing="1" text-anchor="end">1</text>
+      <!-- endpoint dot -->
+      <circle cx="1456" cy="55" r="3.5" fill="#111" opacity=".5"/>
+    </svg>
+  </div>
+
+  <div class="slide-counter">02 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     03 · PLATFORM
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="left">
+    <span class="tag">03 — Platform</span>
+    <h2>We're building<br>the infrastructure<br>for this shift.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      Three integrated layers<br>that support the<br>one-person economy.
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="item">
+      <div class="item-n">01</div>
+      <div class="item-body">
+        <div class="item-title">Community &amp; Media</div>
+        <div class="item-desc">Global network across 13 cities. Content engine for builders. The gathering place for the OPC generation.</div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-n">02</div>
+      <div class="item-body">
+        <div class="item-title">Tooling &amp; Infrastructure</div>
+        <div class="item-desc">Curated tools, workflows, and partnerships that power one-person operations at company-level output.</div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-n">03</div>
+      <div class="item-body">
+        <div class="item-title">Financialization</div>
+        <div class="item-desc">Valuation frameworks, funding pathways, and exchange infrastructure for the next generation of assets.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-counter">03 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     04 · CITIES
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="left" style="position:relative; overflow:hidden;">
+    <span class="tag">04 — Global Network</span>
+    <h2>13<br>cities.<br>One<br>network.</h2>
+    <div style="position:absolute;bottom:48px;left:0;right:0;padding:0 72px;">
+      <div class="rule-full"></div>
+      <div style="padding-top:24px;font-family:var(--f-s);font-size:13px;font-weight:300;color:var(--ink);opacity:.45;line-height:1.8;">
+        Ground-level presence in every market.<br>On-the-ground teams, local operators.
+      </div>
+    </div>
+    <!-- big decorative number -->
+    <div style="position:absolute;bottom:-20px;left:40px;font-family:var(--f-h);font-weight:400;font-size:380px;line-height:1;color:var(--ink);opacity:.04;letter-spacing:-20px;user-select:none;">13</div>
+  </div>
+
+  <div class="right">
+    <span class="tag" style="margin-bottom:20px;">City Index — 2026</span>
+    <div class="city-grid">
+      <div class="city"><span class="dot-red"></span>Kuala Lumpur</div>
+      <div class="city"><span class="dot-red"></span>Singapore</div>
+      <div class="city"><span class="dot-red"></span>Ho Chi Minh City</div>
+      <div class="city"><span class="dot-red"></span>Bangkok</div>
+      <div class="city"><span class="dot-red"></span>Berlin</div>
+      <div class="city"><span class="dot-red"></span>London</div>
+      <div class="city"><span class="dot-red"></span>Lisbon</div>
+      <div class="city"><span class="dot-red"></span>San Francisco</div>
+      <div class="city"><span class="dot-red"></span>New York</div>
+      <div class="city"><span class="dot-red"></span>Buenos Aires</div>
+      <div class="city"><span class="dot-red"></span>São Paulo</div>
+      <div class="city" style="opacity:.35;"><span style="width:5px;height:5px;border:1px solid var(--dim);border-radius:50%;flex-shrink:0;display:inline-block;"></span>+ More TBD</div>
+    </div>
+    <div class="summit-box" style="margin-top:28px;">
+      <div class="st">Flagship</div>
+      <div class="sn">Global OPC Summit — June 2026</div>
+    </div>
+  </div>
+
+  <div class="slide-counter">04 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     05 · THE ROOM
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="top" style="padding-top:72px; padding-left:72px; padding-right:72px;">
+    <span class="tag">05 — The Room</span>
+    <div style="display:flex; align-items:baseline; gap:48px;">
+      <h2>Every person in the room<br>runs their own company.</h2>
+      <div class="sub" style="max-width:340px;">A vetted gathering of operators, not spectators. Each attendee is a decision-maker and a buyer.</div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin:0 72px; border-top:1px solid var(--dim); display:grid; grid-template-columns:repeat(5,1fr); flex:1; margin-top:40px;">
+    <div class="cell" style="padding:28px 24px; border-right:1px solid var(--dim);">
+      <div class="cell-n">01</div>
+      <div class="cell-t">SaaS<br>Founders</div>
+      <div class="cell-d">B2B and B2C products run by solo operators &amp; micro-teams.</div>
+    </div>
+    <div class="cell" style="padding:28px 24px; border-right:1px solid var(--dim);">
+      <div class="cell-n">02</div>
+      <div class="cell-t">AI-Native<br>Consultants</div>
+      <div class="cell-d">Agencies of one, delivering agency-level output with AI leverage.</div>
+    </div>
+    <div class="cell" style="padding:28px 24px; border-right:1px solid var(--dim);">
+      <div class="cell-n">03</div>
+      <div class="cell-t">Content &amp;<br>Media Operators</div>
+      <div class="cell-d">Newsletter, podcast, and community businesses with real revenue.</div>
+    </div>
+    <div class="cell" style="padding:28px 24px; border-right:1px solid var(--dim);">
+      <div class="cell-n">04</div>
+      <div class="cell-t">Developer<br>Tool Builders</div>
+      <div class="cell-d">Open source maintainers and indie dev tool founders.</div>
+    </div>
+    <div class="cell" style="padding:28px 24px;">
+      <div class="cell-n">05</div>
+      <div class="cell-t">Designers &amp;<br>Creative Studios</div>
+      <div class="cell-d">Solo creatives running full studios: brand, product, motion.</div>
+    </div>
+  </div>
+
+  <div style="padding:24px 72px 72px;">
+    <div class="rule-full"></div>
+  </div>
+
+  <div class="slide-counter">05 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     06 · TRACK RECORD
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="left">
+    <div>
+      <span class="tag">06 — Track Record</span>
+      <h2>We've built<br>global builder<br>communities<br>before.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat-row">
+        <div class="n">[X]+</div>
+        <div class="l">Events organized across<br>multiple continents</div>
+      </div>
+      <div class="stat-row">
+        <div class="n">[X]</div>
+        <div class="l">Cities where our events<br>have been held</div>
+      </div>
+      <div class="stat-row" style="border-bottom:none;">
+        <div class="n">[X]K</div>
+        <div class="l">Community members in<br>the OPC network</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+    <span class="tag">About the founders</span>
+    <div class="body" style="margin-bottom:auto; max-width:520px;">
+      Built and operated the world's largest Web3 developer community.
+      Ran events across 30+ cities. Know what it takes to grow a movement from zero.
+      Now building the same for the one-person company era.
+    </div>
+    <div class="founder-block">
+      <div class="founder-quote">
+        "Construction isn't just about concrete and structures —
+        it's about shaping an environment where people can build
+        with dignity."
+      </div>
+      <div class="founder-name">OPC Commons · Founded 2025</div>
+    </div>
+  </div>
+
+  <div class="slide-counter">06 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     07 · TIERS
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="head-row" style="padding:56px 72px 0;">
+    <span class="tag" style="margin-bottom:0;">07 — Partnership</span>
+  </div>
+  <div style="padding:0 72px 8px; display:flex; align-items:baseline; gap:48px;">
+    <h2>Partner with<br>the movement.</h2>
+    <div class="sub">Three levels of partnership, built for brands serving the one-person economy.</div>
+  </div>
+
+  <div class="tiers" style="margin:0 72px; flex:1; display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--dim);">
+    <div class="tier">
+      <div class="tier-label">Tier 01</div>
+      <div class="tier-name">City Partner</div>
+      <div class="tier-price">$[TBD] per city</div>
+      <div class="tier-feat">Logo on all event materials</div>
+      <div class="tier-feat">10-min keynote slot at the event</div>
+      <div class="tier-feat">Newsletter mention (city-specific)</div>
+      <div class="tier-feat">Event photo &amp; video usage rights</div>
+      <div class="tier-note">Best for regional products<br>going deep in one market</div>
+    </div>
+    <div class="tier">
+      <div class="tier-label">Tier 02</div>
+      <div class="tier-name">Global Series<br>Partner</div>
+      <div class="tier-price">$[TBD] per series</div>
+      <div class="tier-feat">Logo across all 13 cities</div>
+      <div class="tier-feat">10-min keynote at selected cities</div>
+      <div class="tier-feat">Monthly newsletter featured placement</div>
+      <div class="tier-feat">1 sponsored podcast ep / quarter</div>
+      <div class="tier-feat">Co-branded social content 2×/month</div>
+      <div class="tier-note">Best for global SaaS / AI tools<br>targeting solo builders</div>
+    </div>
+    <div class="tier">
+      <div class="tier-lim">Limited · 3–5 Spots</div>
+      <div class="tier-label" style="color:#fff;opacity:.3;">Tier 03</div>
+      <div class="tier-name">Founding Partner</div>
+      <div class="tier-price">$[TBD] per year</div>
+      <div class="tier-feat">All Global Series benefits</div>
+      <div class="tier-feat">Founding Partner site placement</div>
+      <div class="tier-feat">Exclusive Summit stage + exhibition</div>
+      <div class="tier-feat">Named sponsor of OPC Builder Survey</div>
+      <div class="tier-feat">Access to OPC core founder network</div>
+      <div class="tier-note">Best for infrastructure brands<br>of the OPC economy</div>
+    </div>
+  </div>
+
+  <div style="padding:20px 72px 40px;">
+    <div class="rule-full"></div>
+  </div>
+
+  <div class="slide-counter">07 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     08 · ROADMAP
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="left">
+    <span class="tag">08 — Roadmap</span>
+    <h2>This is just<br>the<br>beginning.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      Every great movement starts with a series.<br>
+      Ours starts in 2026 with 13 cities,<br>
+      a summit, and a full content engine.
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="milestone">
+      <div class="m-num">01</div>
+      <div class="m-body">
+        <div class="m-date">Q2 2026</div>
+        <div class="m-title">Series Launch</div>
+        <div class="m-desc">Global Meetup Series launches across the first wave of cities. Monthly programming begins.</div>
+      </div>
+    </div>
+    <div class="milestone">
+      <div class="m-num">02</div>
+      <div class="m-body">
+        <div class="m-date">June 2026</div>
+        <div class="m-title">Global OPC Summit</div>
+        <div class="m-desc">The flagship event. The entire OPC network, in one room. Keynotes, workshops, exhibition floor.</div>
+      </div>
+    </div>
+    <div class="milestone">
+      <div class="m-num">03</div>
+      <div class="m-body">
+        <div class="m-date">Q3 – Q4 2026</div>
+        <div class="m-title">Full Cadence</div>
+        <div class="m-desc">All 13+ cities active. Content engine at full speed. Founding Partner features go live.</div>
+      </div>
+    </div>
+    <div class="milestone" style="border-bottom:none;">
+      <div class="m-num">04</div>
+      <div class="m-body">
+        <div class="m-date">2027</div>
+        <div class="m-title">Platform Expansion</div>
+        <div class="m-desc">Tooling layer launches. Financialization pilot begins. OPC becomes the category infrastructure.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-counter">08 / 09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     09 · LET'S TALK
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="corner-marks"><b></b></div>
+  <div class="wordmark">OPC Commons</div>
+
+  <div class="left">
+    <svg class="pxface" width="80" height="64" fill="white" opacity=".6">
+      <use href="#px-face" width="80" height="64"/>
+    </svg>
+    <h2>Let's<br>talk.</h2>
+    <div class="rule"></div>
+    <div style="font-family:var(--f-s); font-size:14px; font-weight:300; color:#fff; opacity:.45; line-height:1.9;">
+      No bots, just real people.<br>
+      Reach out via the details below<br>
+      or book a 30-min call.
+    </div>
+    <div style="margin-top:auto; padding-top:48px;">
+      <div style="font-family:var(--f-m);font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#fff;opacity:.2;">OPC Commons · Global Series 2026</div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="contact-block">
+      <div class="c-label">Contact</div>
+      <div class="c-val">[Founder Name]</div>
+      <div class="c-val">[email@opc.com]</div>
+      <div class="c-val">[calendar link]</div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.08); padding-top:36px; margin-top:auto;">
+      <div style="font-family:var(--f-m);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#fff;opacity:.2;margin-bottom:16px;">Headquarters</div>
+      <div style="font-family:var(--f-s);font-size:14px;font-weight:300;color:#fff;opacity:.35;line-height:2;">
+        [City, Country]<br>
+        [Registered Name]
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-counter" style="color:#fff; opacity:.2;">09 / 09</div>
+</div>
+
+</div><!-- /stage -->
+</div><!-- /deck -->
+
+<!-- dot background canvas -->
+<canvas id="dot-canvas"></canvas>
+
+<!-- navigation -->
+<div class="nav">
+  <button class="nb" onclick="go(-1)">←</button>
+  <div class="np" id="np">01 / 09</div>
+  <button class="nb" onclick="go(1)">→</button>
+</div>
+
+<script>
+const SLIDES = document.querySelectorAll('.slide');
+const N = SLIDES.length;
+let cur = 0;
+
+function show(n) {
+  SLIDES[cur].classList.remove('active');
+  cur = ((n % N) + N) % N;
+  SLIDES[cur].classList.add('active');
+  document.getElementById('np').textContent =
+    String(cur + 1).padStart(2,'0') + ' / ' + String(N).padStart(2,'0');
+}
+function go(d) { show(cur + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') go(-1);
+  if (e.key === 'f' || e.key === 'F') {
+    document.fullscreenElement
+      ? document.exitFullscreen()
+      : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const d = e.changedTouches[0].clientX - tx;
+  if (Math.abs(d) > 60) go(d < 0 ? 1 : -1);
+});
+
+function scale() {
+  const s  = document.getElementById('stage');
+  const sx = innerWidth / 1600;
+  const sy = innerHeight / 900;
+  const sc = Math.min(sx, sy);
+  s.style.transform = `scale(${sc})`;
+  s.style.left = `${(innerWidth  - 1600 * sc) / 2}px`;
+  s.style.top  = `${(innerHeight - 900  * sc) / 2}px`;
+}
+scale();
+addEventListener('resize', scale);
+
+/* ── Dot background generator ── */
+(function initDots() {
+  /* Seeded LCG random — deterministic across reloads */
+  function mkRng(seed) {
+    let s = seed >>> 0;
+    return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 0xFFFFFFFF; };
+  }
+
+  /* ─ Slide background tile (warm off-white dots) ─ */
+  const TILE = 640;
+  const STEP = 32;   /* dot grid spacing */
+  const tc = document.createElement('canvas');
+  tc.width = tc.height = TILE;
+  const tcx = tc.getContext('2d');
+  const r1 = mkRng(0xDECAFBAD);
+
+  for (let y = STEP / 2; y < TILE + STEP; y += STEP) {
+    for (let x = STEP / 2; x < TILE + STEP; x += STEP) {
+      const jx  = (r1() - .5) * 7;
+      const jy  = (r1() - .5) * 7;
+      const a   = 0.06 + r1() * 0.14;   /* opacity 6–20% */
+      const t   = r1();                  /* warm/cool/neutral */
+      /* base ink: #0A0908 = (10,9,8) — vary hue slightly */
+      let cr, cg, cb;
+      if      (t < 0.35) { cr = 40; cg = 30; cb = 22; }   /* warm brown */
+      else if (t < 0.65) { cr = 20; cg = 18; cb = 28; }   /* cool grey  */
+      else               { cr = 28; cg = 26; cb = 24; }   /* neutral    */
+      tcx.globalAlpha = a;
+      tcx.fillStyle = `rgb(${cr},${cg},${cb})`;
+      tcx.beginPath();
+      tcx.arc(x + jx, y + jy, 0.85, 0, Math.PI * 2);
+      tcx.fill();
+    }
+  }
+  tcx.globalAlpha = 1;
+  const tileURL = tc.toDataURL('image/png');
+  document.documentElement.style.setProperty('--dot-url', `url("${tileURL}")`);
+
+  /* ─ Outer dark canvas (behind slides) ─ */
+  const bg = document.getElementById('dot-canvas');
+  function drawBg() {
+    bg.width  = innerWidth;
+    bg.height = innerHeight;
+    const ctx = bg.getContext('2d');
+    ctx.clearRect(0, 0, bg.width, bg.height);
+
+    const OSTEP = 40;
+    const r2 = mkRng(0xBAADF00D);
+    for (let y = OSTEP / 2; y < bg.height + OSTEP; y += OSTEP) {
+      for (let x = OSTEP / 2; x < bg.width + OSTEP; x += OSTEP) {
+        const jx = (r2() - .5) * 8;
+        const jy = (r2() - .5) * 8;
+        const a  = 0.04 + r2() * 0.10;
+        const t  = r2();
+        let cr, cg, cb;
+        if      (t < 0.35) { cr = 80;  cg = 65;  cb = 55;  }  /* warm */
+        else if (t < 0.65) { cr = 55;  cg = 58;  cb = 80;  }  /* cool */
+        else               { cr = 68;  cg = 66;  cb = 68;  }  /* mid  */
+        ctx.globalAlpha = a;
+        ctx.fillStyle = `rgb(${cr},${cg},${cb})`;
+        ctx.beginPath();
+        ctx.arc(x + jx, y + jy, 0.9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  drawBg();
+  addEventListener('resize', drawBg);
+})();
+</script>
+</body>
+</html>

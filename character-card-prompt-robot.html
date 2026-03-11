@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>角色卡提示词生成器 — Nanonana 角色卡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1a1a2e;
+      --card: #16213e;
+      --accent: #e94560;
+      --accent-soft: rgba(233, 69, 96, 0.15);
+      --text: #eaeaea;
+      --text-muted: #a0a0a0;
+      --border: #2a2a4a;
+      --success: #0f9d58;
+    }
+    html { font-family: 'Noto Sans SC', sans-serif; font-size: 15px; line-height: 1.6; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px; }
+
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .panel-title {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    label { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 6px; }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 0.8; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 12px;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:active { transform: scale(0.98); }
+
+    .output-section { margin-top: 28px; }
+    .output-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .output-block h3 {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .output-block pre {
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      background: var(--border);
+      color: var(--text-muted);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .copy-btn:hover { background: var(--accent); color: #fff; }
+    .copy-btn.copied { background: var(--success); color: #fff; }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .step-list { padding-left: 18px; margin-top: 8px; }
+    .step-list li { margin-bottom: 4px; color: var(--text-muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>角色卡提示词生成器</h1>
+    <p class="subtitle">输入角色名和参考图（或描述），一键生成供 Nanonana 使用的正面/侧面/背面、四表情、三姿态提示词，便于拼成一张完整角色卡。</p>
+
+    <div class="panel">
+      <div class="panel-title">1. 基础信息</div>
+      <label>角色名字（必填）</label>
+      <input type="text" id="charName" placeholder="例：陈茉莉" />
+      <label style="margin-top: 12px;">角色简要描述（选填，用于强化一致性；若上传参考图可写「见参考图」）</label>
+      <textarea id="charDesc" placeholder="例：17岁女性，心形脸，杏仁眼，棕色波浪中长发，米色宽松毛衣，深色长裤。或直接写：见参考图，保持与参考图一致。"></textarea>
+      <button type="button" class="btn" id="btnGenerate">生成全部提示词</button>
+    </div>
+
+    <div class="output-section" id="outputSection" style="display: none;">
+      <div class="panel">
+        <div class="panel-title">2. 使用说明</div>
+        <p class="hint">
+          在 Nanonana 中上传同一张<strong>人物参考图</strong>，并依次使用下面各条提示词生成对应画面；最后将生成的 1 正面 + 1 侧面 + 1 背面 + 4 表情 + 3 姿态，按角色卡版式拼成一张图即可。
+        </p>
+        <ul class="step-list">
+          <li>先生成「角色设定块」，在后续每条提示词前可加上该设定以保持画风与外形一致。</li>
+          <li>分别生成：正面 / 左侧面 / 背面 / 开心·悲伤·生气·惊讶 四表情 / 三种姿态。</li>
+          <li>拼图建议：左侧大图用正面；右上放侧面+背面（TURNAROUND）；右中放四表情（EXPRESSION SHEET）；右下放三姿态（POSE SHEET）。</li>
+        </ul>
+        <button type="button" class="btn" id="btnCopyAll" style="margin-top: 12px;">一键复制全部提示词（按顺序）</button>
+      </div>
+
+      <div class="output-block">
+        <h3>【角色设定块】所有图前可加这段以保持一致</h3>
+        <button type="button" class="copy-btn" data-target="outBase">复制</button>
+        <pre id="outBase"></pre>
+      </div>
+
+      <div class="output-block">
+        <h3>① 正面全身</h3>
+        <button type="button" class="copy-btn" data-target="outFront">复制</button>
+        <pre id="outFront"></pre>
+      </div>
+      <div class="output-block">
+        <h3>② 左侧面全身</h3>
+        <button type="button" class="copy-btn" data-target="outSide">复制</button>
+        <pre id="outSide"></pre>
+      </div>
+      <div class="output-block">
+        <h3>③ 背面全身</h3>
+        <button type="button" class="copy-btn" data-target="outBack">复制</button>
+        <pre id="outBack"></pre>
+      </div>
+      <div class="output-block">
+        <h3>④ 表情一：开心 (Happy)</h3>
+        <button type="button" class="copy-btn" data-target="outExpr1">复制</button>
+        <pre id="outExpr1"></pre>
+      </div>
+      <div class="output-block">
+        <h3>⑤ 表情二：悲伤 (Sad)</h3>
+        <button type="button" class="copy-btn" data-target="outExpr2">复制</button>
+        <pre id="outExpr2"></pre>
+      </div>
+      <div class="output-block">
+        <h3>⑥ 表情三：生气 (Angry)</h3>
+        <button type="button" class="copy-btn" data-target="outExpr3">复制</button>
+        <pre id="outExpr3"></pre>
+      </div>
+      <div class="output-block">
+        <h3>⑦ 表情四：惊讶 (Surprised)</h3>
+        <button type="button" class="copy-btn" data-target="outExpr4">复制</button>
+        <pre id="outExpr4"></pre>
+      </div>
+      <div class="output-block">
+        <h3>⑧ 姿态一：站立抱胸</h3>
+        <button type="button" class="copy-btn" data-target="outPose1">复制</button>
+        <pre id="outPose1"></pre>
+      </div>
+      <div class="output-block">
+        <h3>⑨ 姿态二：坐姿阅读</h3>
+        <button type="button" class="copy-btn" data-target="outPose2">复制</button>
+        <pre id="outPose2"></pre>
+      </div>
+      <div class="output-block">
+        <h3>⑩ 姿态三：跑步动态</h3>
+        <button type="button" class="copy-btn" data-target="outPose3">复制</button>
+        <pre id="outPose3"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var charNameEl = document.getElementById('charName');
+      var charDescEl = document.getElementById('charDesc');
+      var btnGenerate = document.getElementById('btnGenerate');
+      var outputSection = document.getElementById('outputSection');
+
+      function getDesc() {
+        var raw = (charDescEl.value || '').trim();
+        if (raw) return raw;
+        return '与参考图人物一致，保持相同脸型、发型、服装与体型。';
+      }
+
+      function basePrompt(name, desc) {
+        return '角色名：' + name + '。' + desc + ' 画风：数字插画，写实偏韩漫/日漫，线条流畅，色彩柔和，白底角色卡风格，全身或半身构图清晰，服装与配饰一致。';
+      }
+
+      function frontPrompt(name, desc) {
+        return basePrompt(name, desc) + ' 构图：正面全身立绘，站立，面向观众，表情自然微笑，双手可自然下垂或一手插袋，与参考图同一服装。';
+      }
+
+      function sidePrompt(name, desc) {
+        return basePrompt(name, desc) + ' 构图：左侧面全身立绘，身体转向画面左侧约90度，展示侧身轮廓与发型侧面，站立，与参考图同一服装。';
+      }
+
+      function backPrompt(name, desc) {
+        return basePrompt(name, desc) + ' 构图：背面全身立绘，背对观众，展示后背与后脑发型，站立，与参考图同一服装。';
+      }
+
+      function exprPrompt(name, desc, emotion, en) {
+        return basePrompt(name, desc) + ' 构图：面部特写或上半身特写，突出表情。表情：' + emotion + ' (' + en + ')，仅此一种情绪，清晰明确。';
+      }
+
+      function posePrompt(name, desc, poseDesc) {
+        return basePrompt(name, desc) + ' 构图：全身立绘。姿态：' + poseDesc + '。与参考图同一服装。';
+      }
+
+      btnGenerate.addEventListener('click', function () {
+        var name = (charNameEl.value || '').trim();
+        if (!name) {
+          alert('请填写角色名字');
+          return;
+        }
+        var desc = getDesc();
+
+        document.getElementById('outBase').textContent = basePrompt(name, desc);
+        document.getElementById('outFront').textContent = frontPrompt(name, desc);
+        document.getElementById('outSide').textContent = sidePrompt(name, desc);
+        document.getElementById('outBack').textContent = backPrompt(name, desc);
+        document.getElementById('outExpr1').textContent = exprPrompt(name, desc, '开心', 'Happy');
+        document.getElementById('outExpr2').textContent = exprPrompt(name, desc, '悲伤', 'Sad');
+        document.getElementById('outExpr3').textContent = exprPrompt(name, desc, '生气', 'Angry');
+        document.getElementById('outExpr4').textContent = exprPrompt(name, desc, '惊讶', 'Surprised');
+        document.getElementById('outPose1').textContent = posePrompt(name, desc, '双臂交叉抱胸站立，自信或略带不羁');
+        document.getElementById('outPose2').textContent = posePrompt(name, desc, '坐在圆凳上，低头阅读手中的书或平板，专注');
+        document.getElementById('outPose3').textContent = posePrompt(name, desc, '跑步姿态，身体前倾，双臂与双腿呈运动状态，动感');
+
+        outputSection.style.display = 'block';
+        outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      document.getElementById('btnCopyAll').addEventListener('click', function () {
+        var ids = ['outBase', 'outFront', 'outSide', 'outBack', 'outExpr1', 'outExpr2', 'outExpr3', 'outExpr4', 'outPose1', 'outPose2', 'outPose3'];
+        var labels = ['【角色设定块】', '①正面', '②左侧面', '③背面', '④开心', '⑤悲伤', '⑥生气', '⑦惊讶', '⑧站立抱胸', '⑨坐姿阅读', '⑩跑步'];
+        var parts = [];
+        ids.forEach(function (id, i) {
+          var el = document.getElementById(id);
+          if (el) parts.push(labels[i] + '\n' + el.textContent);
+        });
+        var full = parts.join('\n\n---\n\n');
+        navigator.clipboard.writeText(full).then(function () {
+          var btn = document.getElementById('btnCopyAll');
+          btn.textContent = '已复制全部';
+          setTimeout(function () { btn.textContent = '一键复制全部提示词（按顺序）'; }, 2000);
+        });
+      });
+
+      outputSection.addEventListener('click', function (e) {
+        var btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        var targetId = btn.getAttribute('data-target');
+        if (!targetId) return;
+        var el = document.getElementById(targetId);
+        if (!el) return;
+        var text = el.textContent;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.classList.add('copied');
+          btn.textContent = '已复制';
+          setTimeout(function () { btn.classList.remove('copied'); btn.textContent = '复制'; }, 1800);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

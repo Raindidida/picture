@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>点阵机器 — Halftone / OPC</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:100%; height:100%; background:#111; color:#e8e6e3;
+  font-family:system-ui,-apple-system,sans-serif; font-size:12px; }
+.shell { display:flex; flex-direction:column; height:100vh; }
+
+/* ── 控制面板 ── */
+.ctrl {
+  flex-shrink:0;
+  background:#181818;
+  border-bottom:1px solid #2a2a2a;
+  padding:0 14px 10px;
+}
+.ctrl-top {
+  display:flex; align-items:center; gap:10px; padding:8px 0 6px;
+  border-bottom:1px solid #222;
+}
+.rows { display:flex; flex-direction:column; gap:0; }
+.row {
+  display:flex; align-items:center; flex-wrap:wrap;
+  gap:6px 12px; padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.row:last-child { border-bottom:none; }
+.group { display:flex; align-items:center; gap:5px; flex-shrink:0; }
+.glabel {
+  color:#aaa; white-space:nowrap; min-width:4.5em;
+  font-size:11px; letter-spacing:.02em;
+}
+input[type="range"] {
+  width:90px; height:4px; accent-color:#C84A2A; cursor:pointer;
+}
+input[type="number"] {
+  width:52px; padding:3px 5px; border-radius:4px; border:1px solid #3a3a3a;
+  background:#222; color:#fff; font-size:11px; text-align:right;
+}
+select {
+  padding:3px 7px; border-radius:4px; border:1px solid #3a3a3a;
+  background:#222; color:#fff; font-size:11px;
+}
+input[type="file"] { font-size:11px; max-width:200px; color:#aaa; }
+.unit { font-size:10px; color:#666; }
+.btn {
+  padding:5px 12px; border-radius:5px; border:none;
+  background:#C84A2A; color:#fff; font-size:11.5px;
+  cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+  white-space:nowrap;
+}
+.btn:hover { background:#a43e21; }
+.btn.sec { background:#2a2a2a; border:1px solid #3a3a3a; }
+.btn.sec:hover { background:#383838; }
+.btn.active { background:#069; }
+.vsep { width:1px; height:14px; background:#2a2a2a; }
+.tag {
+  font-size:9px; text-transform:uppercase; letter-spacing:.1em;
+  color:#666; margin-right:2px; white-space:nowrap;
+}
+
+/* ── 主区 ── */
+.main { flex:1; min-height:0; display:flex; gap:1px; background:#0a0a0a; }
+.pane {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  background:#111; position:relative; overflow:auto;
+}
+.pane-label {
+  position:absolute; top:8px; left:12px; z-index:2;
+  font-size:9px; text-transform:uppercase; letter-spacing:.1em;
+  color:#555; pointer-events:none;
+}
+#srcCanvas, #outCanvas {
+  display:block; max-width:100%; max-height:100%;
+  image-rendering:pixelated;
+}
+.drop-hint {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px;
+  color:#333; pointer-events:none;
+}
+.drop-hint svg { opacity:.25; }
+.drop-hint span { font-size:13px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ─────────── 控制面板 ─────────── -->
+  <div class="ctrl">
+
+    <!-- 顶行：图片 + 类型 + 背景 + 反色 + 下载 -->
+    <div class="ctrl-top">
+      <input id="fileInput" type="file" accept="image/*">
+      <div class="vsep"></div>
+      <div class="group">
+        <span class="tag">类型</span>
+        <select id="typeMode">
+          <option value="classic">经典点阵</option>
+          <option value="opc">OPC 混合</option>
+          <option value="mosaic">马赛克像素</option>
+          <option value="layer5">字符分层</option>
+        </select>
+      </div>
+      <div class="group">
+        <span class="tag">背景</span>
+        <select id="bgMode">
+          <option value="dark">深色</option>
+          <option value="light">浅色</option>
+        </select>
+      </div>
+      <button type="button" class="btn sec" id="btnInvert">⇄ 反色</button>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button type="button" class="btn" id="btnDlSvg">↓ SVG</button>
+        <button type="button" class="btn sec" id="btnDlPng">↓ PNG</button>
+      </div>
+    </div>
+
+    <!-- 参数两排 -->
+    <div class="rows">
+
+      <!-- 第一排：尺寸 + 间距 + 渐变 -->
+      <div class="row">
+        <span class="tag">尺寸</span>
+        <div class="group">
+          <span class="glabel">宽</span>
+          <input type="range" id="wRange" min="64" max="2400" value="800" step="8">
+          <input type="number" id="wNum" min="64" max="2400" value="800" step="8">
+        </div>
+        <div class="group">
+          <span class="glabel">高</span>
+          <input type="range" id="hRange" min="64" max="2400" value="800" step="8">
+          <input type="number" id="hNum" min="64" max="2400" value="800" step="8">
+        </div>
+        <div class="vsep"></div>
+        <span class="tag">间距</span>
+        <div class="group">
+          <span class="glabel">基础间距</span>
+          <input type="range" id="stepRange" min="2" max="80" value="8" step="1">
+          <input type="number" id="stepNum" min="2" max="80" value="8" step="1">
+          <span class="unit">px</span>
+        </div>
+        <div class="group">
+          <span class="glabel">渐变方向</span>
+          <select id="gradDir">
+            <option value="none">无</option>
+            <option value="h">水平</option>
+            <option value="v">垂直</option>
+          </select>
+        </div>
+        <div class="group">
+          <span class="glabel">渐变量</span>
+          <input type="range" id="gradSizeRange" min="0" max="100" value="0">
+          <input type="number" id="gradSizeNum" min="0" max="100" value="0">
+          <span class="unit">%</span>
+        </div>
+      </div>
+
+      <!-- 第二排：对比度 + 经典/OPC 专属 -->
+      <div class="row">
+        <span class="tag">色调</span>
+        <div class="group">
+          <span class="glabel">暗部对比</span>
+          <input type="range" id="shadowContRange" min="30" max="300" value="130">
+          <input type="number" id="shadowContNum" min="0.3" max="3" value="1.3" step="0.05">
+        </div>
+        <div class="group">
+          <span class="glabel">高光对比</span>
+          <input type="range" id="hilightContRange" min="30" max="300" value="100">
+          <input type="number" id="hilightContNum" min="0.3" max="3" value="1.0" step="0.05">
+        </div>
+        <div class="vsep"></div>
+
+        <!-- 经典专属 -->
+        <div id="classic-panel" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="tag">经典</span>
+          <div class="group">
+            <span class="glabel">半径</span>
+            <input type="range" id="rRange" min="3" max="60" value="12">
+            <input type="number" id="rNum" min="0.3" max="6" value="1.2" step="0.1">
+            <span class="unit">px</span>
+          </div>
+          <div class="group">
+            <span class="glabel">随机抖动</span>
+            <input type="range" id="randRange" min="0" max="20" value="0" step="1">
+            <input type="number" id="randNum" min="0" max="20" value="0" step="0.5">
+          </div>
+          <div class="group">
+            <span class="glabel">形状</span>
+            <select id="shape">
+              <option value="circle">圆</option>
+              <option value="roundRect">圆角矩形</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 字符分层专属 -->
+        <div id="layer5-panel" style="display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="tag">分层</span>
+          <div class="group">
+            <span class="glabel">格子大小</span>
+            <input type="range" id="l5CellRange" min="1" max="40" value="10" step="1">
+            <input type="number" id="l5CellNum" min="1" max="40" value="10" step="1">
+            <span class="unit">px</span>
+          </div>
+          <div class="group">
+            <span class="glabel">间距</span>
+            <input type="range" id="l5GapRange" min="0" max="8" value="1" step="1">
+            <input type="number" id="l5GapNum" min="0" max="8" value="1" step="1">
+            <span class="unit">px</span>
+          </div>
+          <div class="group">
+            <span class="glabel">字符集</span>
+            <select id="l5CharSet">
+              <option value="ABCDEFGHIJKLMNOPQRSTUVWXYZ">大写字母</option>
+              <option value="abcdefghijklmnopqrstuvwxyz">小写字母</option>
+              <option value="0123456789">数字</option>
+              <option value="OPCRZ">OPC字母</option>
+              <option value="K">K</option>
+              <option value="▪▫■□▲△◆◇">几何</option>
+            </select>
+          </div>
+          <div class="group">
+            <span class="glabel">细线宽度</span>
+            <input type="range" id="l5LineWRange" min="1" max="30" value="8" step="1">
+            <input type="number" id="l5LineWNum" min="1" max="30" value="8" step="1">
+            <span class="unit">%</span>
+          </div>
+          <div class="group">
+            <span class="glabel">微点半径</span>
+            <input type="range" id="l5DotRange" min="1" max="40" value="10" step="1">
+            <input type="number" id="l5DotNum" min="1" max="40" value="10" step="1">
+            <span class="unit">%</span>
+          </div>
+          <div class="group">
+            <span class="glabel">层级阈值</span>
+            <span style="font-size:10px;color:#888;">暗→亮：细线 / 大块 / 小块 / 字母 / 微点</span>
+          </div>
+          <div class="group">
+            <span class="glabel">T1</span>
+            <input type="range" id="l5T1Range" min="5" max="50" value="18" step="1">
+            <input type="number" id="l5T1Num" min="5" max="50" value="18" step="1">
+          </div>
+          <div class="group">
+            <span class="glabel">T2</span>
+            <input type="range" id="l5T2Range" min="10" max="60" value="35" step="1">
+            <input type="number" id="l5T2Num" min="10" max="60" value="35" step="1">
+          </div>
+          <div class="group">
+            <span class="glabel">T3</span>
+            <input type="range" id="l5T3Range" min="20" max="80" value="55" step="1">
+            <input type="number" id="l5T3Num" min="20" max="80" value="55" step="1">
+          </div>
+          <div class="group">
+            <span class="glabel">T4</span>
+            <input type="range" id="l5T4Range" min="30" max="95" value="75" step="1">
+            <input type="number" id="l5T4Num" min="30" max="95" value="75" step="1">
+          </div>
+        </div>
+
+        <!-- 马赛克专属 -->
+        <div id="mosaic-panel" style="display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="tag">马赛克</span>
+          <div class="group">
+            <span class="glabel">像素大小</span>
+            <input type="range" id="mosaicSzRange" min="2" max="80" value="12" step="1">
+            <input type="number" id="mosaicSzNum" min="2" max="80" value="12" step="1">
+            <span class="unit">px</span>
+          </div>
+          <div class="group">
+            <span class="glabel">间隙</span>
+            <input type="range" id="mosaicGapRange" min="0" max="12" value="1" step="1">
+            <input type="number" id="mosaicGapNum" min="0" max="12" value="1" step="1">
+            <span class="unit">px</span>
+          </div>
+          <div class="group">
+            <span class="glabel">形状</span>
+            <select id="mosaicShape">
+              <option value="square">方块</option>
+              <option value="circle">圆形</option>
+              <option value="diamond">菱形</option>
+              <option value="cross">十字</option>
+            </select>
+          </div>
+          <div class="group">
+            <span class="glabel">颜色模式</span>
+            <select id="mosaicColor">
+              <option value="avg">平均色（彩色）</option>
+              <option value="mono2">双色（背景/墨水）</option>
+              <option value="posterize">色调分离</option>
+            </select>
+          </div>
+          <div class="group" id="mosaicPosterGroup" style="display:none;">
+            <span class="glabel">分级数</span>
+            <input type="range" id="mosaicPosterRange" min="2" max="8" value="4" step="1">
+            <input type="number" id="mosaicPosterNum" min="2" max="8" value="4" step="1">
+          </div>
+        </div>
+
+        <!-- OPC 专属 -->
+        <div id="opc-panel" style="display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="tag">OPC</span>
+          <div class="group">
+            <span class="glabel">方块大小</span>
+            <input type="range" id="blockRange" min="2" max="40" value="10" step="1">
+            <input type="number" id="blockNum" min="2" max="40" value="10" step="1">
+            <span class="unit">px</span>
+          </div>
+          <div class="group">
+            <span class="glabel">字符集</span>
+            <select id="charSet">
+              <option value="OPC">OPC</option>
+              <option value="OPCRZ">OPC+RZ</option>
+              <option value="ABCDEFGHIJK">字母</option>
+              <option value="0123456789">数字</option>
+              <option value="▪▫■□▲△">几何</option>
+            </select>
+          </div>
+          <div class="group">
+            <span class="glabel">暗部阈值</span>
+            <input type="range" id="darkThreshRange" min="0" max="100" value="35">
+            <input type="number" id="darkThreshNum" min="0" max="100" value="35">
+            <span class="unit">%</span>
+          </div>
+          <div class="group">
+            <span class="glabel">高光阈值</span>
+            <input type="range" id="lightThreshRange" min="0" max="100" value="72">
+            <input type="number" id="lightThreshNum" min="0" max="100" value="72">
+            <span class="unit">%</span>
+          </div>
+        </div>
+
+      </div><!-- /row2 -->
+    </div><!-- /rows -->
+  </div><!-- /ctrl -->
+
+  <!-- ─────────── 主预览 ─────────── -->
+  <div class="main">
+    <div class="pane" id="paneOrig">
+      <div class="pane-label">原图</div>
+      <canvas id="srcCanvas"></canvas>
+      <div class="drop-hint" id="dropHint">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#eee" stroke-width="1.2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        <span>上传图片后开始处理</span>
+      </div>
+    </div>
+    <div class="pane">
+      <div class="pane-label">点阵输出</div>
+      <canvas id="outCanvas"></canvas>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+<script>
+/* ─────────── refs ─────────── */
+const fileInput = document.getElementById('fileInput');
+const srcCanvas = document.getElementById('srcCanvas');
+const outCanvas = document.getElementById('outCanvas');
+const dropHint  = document.getElementById('dropHint');
+const wRange=document.getElementById('wRange'), wNum=document.getElementById('wNum');
+const hRange=document.getElementById('hRange'), hNum=document.getElementById('hNum');
+const stepRange=document.getElementById('stepRange'), stepNum=document.getElementById('stepNum');
+const gradDir=document.getElementById('gradDir');
+const gradSizeRange=document.getElementById('gradSizeRange'), gradSizeNum=document.getElementById('gradSizeNum');
+const shadowContRange=document.getElementById('shadowContRange'), shadowContNum=document.getElementById('shadowContNum');
+const hilightContRange=document.getElementById('hilightContRange'), hilightContNum=document.getElementById('hilightContNum');
+const randRange=document.getElementById('randRange'), randNum=document.getElementById('randNum');
+const rRange=document.getElementById('rRange'), rNum=document.getElementById('rNum');
+const shapeSel=document.getElementById('shape');
+const blockRange=document.getElementById('blockRange'), blockNum=document.getElementById('blockNum');
+const charSet=document.getElementById('charSet');
+const darkThreshRange=document.getElementById('darkThreshRange'), darkThreshNum=document.getElementById('darkThreshNum');
+const lightThreshRange=document.getElementById('lightThreshRange'), lightThreshNum=document.getElementById('lightThreshNum');
+const typeMode=document.getElementById('typeMode');
+const bgMode=document.getElementById('bgMode');
+const btnInvert=document.getElementById('btnInvert');
+const btnDlSvg=document.getElementById('btnDlSvg');
+const btnDlPng=document.getElementById('btnDlPng');
+const classicPanel=document.getElementById('classic-panel');
+const opcPanel=document.getElementById('opc-panel');
+const mosaicPanel=document.getElementById('mosaic-panel');
+const mosaicSzRange=document.getElementById('mosaicSzRange'), mosaicSzNum=document.getElementById('mosaicSzNum');
+const mosaicGapRange=document.getElementById('mosaicGapRange'), mosaicGapNum=document.getElementById('mosaicGapNum');
+const mosaicShape=document.getElementById('mosaicShape');
+const mosaicColor=document.getElementById('mosaicColor');
+const mosaicPosterRange=document.getElementById('mosaicPosterRange'), mosaicPosterNum=document.getElementById('mosaicPosterNum');
+const mosaicPosterGroup=document.getElementById('mosaicPosterGroup');
+const layer5Panel=document.getElementById('layer5-panel');
+const l5CellRange=document.getElementById('l5CellRange'), l5CellNum=document.getElementById('l5CellNum');
+const l5GapRange=document.getElementById('l5GapRange'), l5GapNum=document.getElementById('l5GapNum');
+const l5CharSetSel=document.getElementById('l5CharSet');
+const l5LineWRange=document.getElementById('l5LineWRange'), l5LineWNum=document.getElementById('l5LineWNum');
+const l5DotRange=document.getElementById('l5DotRange'), l5DotNum=document.getElementById('l5DotNum');
+const l5T1Range=document.getElementById('l5T1Range'), l5T1Num=document.getElementById('l5T1Num');
+const l5T2Range=document.getElementById('l5T2Range'), l5T2Num=document.getElementById('l5T2Num');
+const l5T3Range=document.getElementById('l5T3Range'), l5T3Num=document.getElementById('l5T3Num');
+const l5T4Range=document.getElementById('l5T4Range'), l5T4Num=document.getElementById('l5T4Num');
+
+let loadedImage=null, invertActive=false, lastSvgStr='';
+let seed=0xDECAFBAD;
+function rng(){ seed=(seed*1664525+1013904223)>>>0; return seed/0xFFFFFFFF; }
+function clamp(v,lo,hi){ return Math.min(hi,Math.max(lo,v)); }
+
+/* ─────────── bind slider ↔ number ─────────── */
+function bindPair(rEl,nEl,toN,fromN,cb){
+  rEl.addEventListener('input',()=>{ nEl.value=toN(rEl.value); cb(); });
+  nEl.addEventListener('change',()=>{ const v=fromN(nEl.value); nEl.value=v; rEl.value=String(v); cb(); });
+}
+function bindContrast(rEl,nEl){
+  rEl.addEventListener('input',()=>{ nEl.value=(rEl.value/100).toFixed(2); render(); });
+  nEl.addEventListener('change',()=>{
+    let v=clamp(parseFloat(nEl.value)||1,0.3,3);
+    nEl.value=v.toFixed(2); rEl.value=Math.round(v*100); render();
+  });
+}
+bindPair(wRange,wNum,v=>v,v=>clamp(parseInt(v)||800,64,2400),onSizeChange);
+bindPair(hRange,hNum,v=>v,v=>clamp(parseInt(v)||800,64,2400),onSizeChange);
+bindPair(stepRange,stepNum,v=>v,v=>clamp(parseInt(v)||8,2,80),render);
+bindPair(gradSizeRange,gradSizeNum,v=>v,v=>clamp(parseInt(v)||0,0,100),render);
+bindPair(randRange,randNum,v=>v,v=>clamp(parseFloat(v)||0,0,20),render);
+bindPair(blockRange,blockNum,v=>v,v=>clamp(parseInt(v)||10,2,40),render);
+bindPair(darkThreshRange,darkThreshNum,v=>v,v=>clamp(parseInt(v)||35,0,100),render);
+bindPair(lightThreshRange,lightThreshNum,v=>v,v=>clamp(parseInt(v)||72,0,100),render);
+/* mosaic */
+bindPair(mosaicSzRange,mosaicSzNum,v=>v,v=>clamp(parseInt(v)||12,2,80),render);
+bindPair(mosaicGapRange,mosaicGapNum,v=>v,v=>clamp(parseInt(v)||1,0,12),render);
+bindPair(mosaicPosterRange,mosaicPosterNum,v=>v,v=>clamp(parseInt(v)||4,2,8),render);
+[mosaicShape,mosaicColor].forEach(el=>el.addEventListener('change',()=>{
+  mosaicPosterGroup.style.display=mosaicColor.value==='posterize'?'flex':'none';
+  render();
+}));
+/* layer5 */
+bindPair(l5CellRange,l5CellNum,v=>v,v=>clamp(parseInt(v)||10,1,40),render);
+bindPair(l5GapRange,l5GapNum,v=>v,v=>clamp(parseInt(v)||1,0,8),render);
+bindPair(l5LineWRange,l5LineWNum,v=>v,v=>clamp(parseInt(v)||8,1,30),render);
+bindPair(l5DotRange,l5DotNum,v=>v,v=>clamp(parseInt(v)||10,1,40),render);
+bindPair(l5T1Range,l5T1Num,v=>v,v=>clamp(parseInt(v)||18,5,50),render);
+bindPair(l5T2Range,l5T2Num,v=>v,v=>clamp(parseInt(v)||35,10,60),render);
+bindPair(l5T3Range,l5T3Num,v=>v,v=>clamp(parseInt(v)||55,20,80),render);
+bindPair(l5T4Range,l5T4Num,v=>v,v=>clamp(parseInt(v)||75,30,95),render);
+l5CharSetSel.addEventListener('change',render);
+/* radius: range 3-60, num 0.3-6 */
+rRange.addEventListener('input',()=>{ rNum.value=(rRange.value/10).toFixed(1); render(); });
+rNum.addEventListener('change',()=>{
+  let v=clamp(parseFloat(rNum.value)||1.2,0.3,6);
+  rNum.value=v.toFixed(1); rRange.value=Math.round(v*10); render();
+});
+bindContrast(shadowContRange,shadowContNum);
+bindContrast(hilightContRange,hilightContNum);
+[gradDir,shapeSel,bgMode,typeMode,charSet].forEach(el=>el.addEventListener('change',()=>{ togglePanels(); render(); }));
+
+function togglePanels(){
+  const mode=typeMode.value;
+  classicPanel.style.display=mode==='classic'?'flex':'none';
+  opcPanel.style.display=mode==='opc'?'flex':'none';
+  mosaicPanel.style.display=mode==='mosaic'?'flex':'none';
+  layer5Panel.style.display=mode==='layer5'?'flex':'none';
+}
+
+/* ─────────── image load ─────────── */
+fileInput.addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const url=URL.createObjectURL(f);
+  const img=new Image();
+  img.onload=()=>{
+    loadedImage=img;
+    /* auto-fit: set width/height to image's natural size, clamped */
+    const nw=clamp(img.naturalWidth,64,2400);
+    const nh=clamp(img.naturalHeight,64,2400);
+    wNum.value=nw; wRange.value=nw;
+    hNum.value=nh; hRange.value=nh;
+    dropHint.style.display='none';
+    drawCanvas(); render();
+  };
+  img.src=url;
+});
+
+function onSizeChange(){ if(loadedImage){ drawCanvas(); render(); } }
+
+function drawCanvas(){
+  if(!loadedImage) return;
+  const w=clamp(parseInt(wNum.value)||800,64,2400);
+  const h=clamp(parseInt(hNum.value)||800,64,2400);
+  srcCanvas.width=w; srcCanvas.height=h;
+  const ctx=srcCanvas.getContext('2d');
+  ctx.drawImage(loadedImage,0,0,w,h);
+}
+
+/* ─────────── pixel utils ─────────── */
+function getLum(idata,w,ix,iy){
+  const idx=(iy*w+ix)*4;
+  let l=(0.299*idata[idx]+0.587*idata[idx+1]+0.114*idata[idx+2])/255;
+  return invertActive?1-l:l;
+}
+
+function getParams(){
+  return {
+    w:srcCanvas.width, h:srcCanvas.height,
+    baseStep:Math.max(2,parseInt(stepNum.value)||8),
+    gradDirVal:gradDir.value,
+    gradSize:(parseInt(gradSizeNum.value)||0)/100,
+    shadowCont:parseFloat(shadowContNum.value)||1.3,
+    hilightCont:parseFloat(hilightContNum.value)||1.0,
+    randVal:parseFloat(randNum.value)||0,
+    maxR:parseFloat(rNum.value)||1.2,
+    useRoundRect:shapeSel.value==='roundRect',
+    isDarkBg:bgMode.value==='dark',
+    mode:typeMode.value,
+    isOpc:typeMode.value==='opc',
+    isMosaic:typeMode.value==='mosaic',
+    isLayer5:typeMode.value==='layer5',
+    blockSz:parseInt(blockNum.value)||10,
+    chars:charSet.value||'OPC',
+    darkThr:(parseInt(darkThreshNum.value)||35)/100,
+    lightThr:(parseInt(lightThreshNum.value)||72)/100,
+    mosaicSz:parseInt(mosaicSzNum.value)||12,
+    mosaicGap:parseInt(mosaicGapNum.value)||1,
+    mosaicShapeVal:mosaicShape.value,
+    mosaicColorMode:mosaicColor.value,
+    mosaicPoster:parseInt(mosaicPosterNum.value)||4,
+    l5Cell:parseInt(l5CellNum.value)||10,
+    l5Gap:parseInt(l5GapNum.value)||1,
+    l5Chars:l5CharSetSel.value||'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    l5LineWPct:(parseInt(l5LineWNum.value)||8)/100,
+    l5DotPct:(parseInt(l5DotNum.value)||10)/100,
+    l5T1:(parseInt(l5T1Num.value)||18)/100,
+    l5T2:(parseInt(l5T2Num.value)||35)/100,
+    l5T3:(parseInt(l5T3Num.value)||55)/100,
+    l5T4:(parseInt(l5T4Num.value)||75)/100,
+  };
+}
+
+function getStepMul(p,x,y){
+  if(p.gradDirVal==='none'||p.gradSize===0) return 1;
+  const n=p.gradDirVal==='h'?x/p.w:y/p.h;
+  return clamp(1+p.gradSize*(n-0.5)*2,0.4,1.6);
+}
+
+/* ─────────── SVG helpers ─────────── */
+function svgCircle(cx,cy,r,fill){
+  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(2)}" fill="${fill}"/>`;
+}
+function svgRRect(cx,cy,half,fill){
+  const rx=(half*0.55).toFixed(2);
+  return `<rect x="${(cx-half).toFixed(1)}" y="${(cy-half).toFixed(1)}" width="${(half*2).toFixed(1)}" height="${(half*2).toFixed(1)}" rx="${rx}" ry="${rx}" fill="${fill}"/>`;
+}
+function svgSolidRect(cx,cy,sz,fill){
+  const half=sz/2, rx=(sz*0.07).toFixed(2);
+  return `<rect x="${(cx-half).toFixed(1)}" y="${(cy-half).toFixed(1)}" width="${sz.toFixed(1)}" height="${sz.toFixed(1)}" rx="${rx}" ry="${rx}" fill="${fill}"/>`;
+}
+function svgVLine(cx,cy,lineH,lineW,fill){
+  return `<line x1="${cx.toFixed(1)}" y1="${(cy-lineH/2).toFixed(1)}" x2="${cx.toFixed(1)}" y2="${(cy+lineH/2).toFixed(1)}" stroke="${fill}" stroke-width="${lineW.toFixed(2)}" stroke-linecap="square"/>`;
+}
+function svgText(cx,cy,ch,sz,fill){
+  return `<text x="${cx.toFixed(1)}" y="${cy.toFixed(1)}" font-size="${sz.toFixed(1)}" fill="${fill}" text-anchor="middle" dominant-baseline="middle">${ch}</text>`;
+}
+
+/* ─────────── CLASSIC ─────────── */
+function buildClassicSvg(p,idata){
+  const bg=p.isDarkBg?'#1a1a1a':'#f7f5f2';
+  const ink=p.isDarkBg?'#e8e6e3':'#0a0908';
+  const parts=[`<svg xmlns="http://www.w3.org/2000/svg" width="${p.w}" height="${p.h}" viewBox="0 0 ${p.w} ${p.h}">`,
+               `<rect width="100%" height="100%" fill="${bg}"/>`];
+  seed=0xDECAFBAD;
+  let y=p.baseStep/2;
+  while(y<p.h){
+    let x=p.baseStep/2;
+    while(x<p.w){
+      const mul=getStepMul(p,x,y);
+      const ix=clamp(Math.floor(x),0,p.w-1), iy=clamp(Math.floor(y),0,p.h-1);
+      const lum=getLum(idata,p.w,ix,iy);
+      const darkness=1-lum;
+      const adjD=darkness>0.5?Math.pow(darkness,p.shadowCont):Math.pow(darkness,p.hilightCont);
+      const radius=adjD*p.maxR;
+      if(radius>=0.06){
+        const jx=p.randVal>0?(rng()-0.5)*2*p.randVal:0;
+        const jy=p.randVal>0?(rng()-0.5)*2*p.randVal:0;
+        parts.push(p.useRoundRect?svgRRect(x+jx,y+jy,radius,ink):svgCircle(x+jx,y+jy,radius,ink));
+      }
+      x+=p.baseStep*mul;
+    }
+    let dy=p.baseStep;
+    if(p.gradDirVal==='v'&&p.gradSize>0){
+      dy=p.baseStep*(1+p.gradSize*(y/p.h-0.5)*2);
+      dy=clamp(dy,p.baseStep*0.4,p.baseStep*1.6);
+    }
+    y+=dy;
+  }
+  parts.push('</svg>');
+  return parts.join('\n');
+}
+
+/* ─────────── OPC ─────────── */
+function buildOpcSvg(p,idata){
+  const bg=p.isDarkBg?'#0a0908':'#f7f5f2';
+  const ink=p.isDarkBg?'#ffffff':'#0a0908';
+  const cell=p.blockSz, half=cell/2;
+  const parts=[`<svg xmlns="http://www.w3.org/2000/svg" width="${p.w}" height="${p.h}" viewBox="0 0 ${p.w} ${p.h}" font-family="monospace">`,
+               `<rect width="100%" height="100%" fill="${bg}"/>`];
+  seed=0xDECAFBAD;
+  for(let gy=0;gy<p.h;gy+=cell){
+    for(let gx=0;gx<p.w;gx+=cell){
+      const ix=clamp(Math.floor(gx+half),0,p.w-1);
+      const iy=clamp(Math.floor(gy+half),0,p.h-1);
+      const lum=getLum(idata,p.w,ix,iy);
+      const cx=gx+half, cy=gy+half;
+
+      if(lum<=p.darkThr){
+        /* DARK → solid square, bigger = darker */
+        const t=1-(lum/Math.max(p.darkThr,0.001));
+        const adj=Math.pow(t,1/p.shadowCont);
+        const sz=clamp(adj*cell,cell*0.25,cell*0.97);
+        parts.push(svgSolidRect(cx,cy,sz,ink));
+
+      } else if(lum>=p.lightThr){
+        /* HIGHLIGHT → vertical line, taller/wider = brighter */
+        const t=(lum-p.lightThr)/Math.max(1-p.lightThr,0.001);
+        const adj=Math.pow(t,1/p.hilightCont);
+        const lineW=clamp(adj*cell*0.8,0.5,cell*0.88);
+        const lineH=clamp(t*cell*1.15,cell*0.3,cell*1.3);
+        parts.push(svgVLine(cx,cy,lineH,lineW,ink));
+
+      } else {
+        /* EDGE → tiny square or random char */
+        const norm=(lum-p.darkThr)/Math.max(p.lightThr-p.darkThr,0.001);
+        const r=rng();
+        if(r<0.48){
+          const sz=clamp((1-norm)*cell*0.6+0.8,0.8,cell*0.6);
+          parts.push(svgSolidRect(cx,cy,sz,ink));
+        } else {
+          const ch=p.chars[Math.floor(rng()*p.chars.length)]||'O';
+          const fsz=clamp((1-norm)*cell*0.72+1.5,1.5,cell*0.72);
+          parts.push(svgText(cx,cy,ch,fsz,ink));
+        }
+      }
+    }
+  }
+  parts.push('</svg>');
+  return parts.join('\n');
+}
+
+/* ─────────── MOSAIC ─────────── */
+function buildMosaicSvg(p, idata){
+  const cell=p.mosaicSz, gap=p.mosaicGap;
+  const tileW=cell, tileH=cell;
+  const bg=p.isDarkBg?'#0a0908':'#f7f5f2';
+  const inkFg=p.isDarkBg?'#ffffff':'#0a0908';
+  const parts=[
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${p.w}" height="${p.h}" viewBox="0 0 ${p.w} ${p.h}">`,
+    `<rect width="100%" height="100%" fill="${bg}"/>`
+  ];
+
+  /* helper: sample average color of a cell region */
+  function avgCell(gx,gy){
+    let r=0,g=0,b=0,n=0;
+    const x0=Math.floor(gx), y0=Math.floor(gy);
+    const x1=Math.min(x0+cell, p.w), y1=Math.min(y0+cell, p.h);
+    for(let y=y0;y<y1;y++){
+      for(let x=x0;x<x1;x++){
+        const i=(y*p.w+x)*4;
+        r+=idata[i]; g+=idata[i+1]; b+=idata[i+2]; n++;
+      }
+    }
+    if(!n) return {r:0,g:0,b:0};
+    return {r:r/n, g:g/n, b:b/n};
+  }
+
+  /* posterize: snap a 0-255 channel to N levels */
+  function posterCh(v,levels){
+    const step=255/(levels-1);
+    return Math.round(Math.round(v/step)*step);
+  }
+
+  function toHex(r,g,b){
+    return '#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('');
+  }
+
+  function tileShape(cx,cy,w,h,fill){
+    const hw=w/2, hh=h/2;
+    switch(p.mosaicShapeVal){
+      case 'circle': {
+        const r=Math.min(hw,hh);
+        return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${fill}"/>`;
+      }
+      case 'diamond': {
+        const pts=`${cx.toFixed(1)},${(cy-hh).toFixed(1)} ${(cx+hw).toFixed(1)},${cy.toFixed(1)} ${cx.toFixed(1)},${(cy+hh).toFixed(1)} ${(cx-hw).toFixed(1)},${cy.toFixed(1)}`;
+        return `<polygon points="${pts}" fill="${fill}"/>`;
+      }
+      case 'cross': {
+        const t=Math.min(hw,hh)*0.35;
+        return [
+          `<rect x="${(cx-t).toFixed(1)}" y="${(cy-hh).toFixed(1)}" width="${(t*2).toFixed(1)}" height="${h.toFixed(1)}" fill="${fill}"/>`,
+          `<rect x="${(cx-hw).toFixed(1)}" y="${(cy-t).toFixed(1)}" width="${w.toFixed(1)}" height="${(t*2).toFixed(1)}" fill="${fill}"/>`
+        ].join('');
+      }
+      default: { /* square */
+        const rx=Math.min(w,h)*0.08;
+        return `<rect x="${(cx-hw).toFixed(1)}" y="${(cy-hh).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${rx.toFixed(1)}" fill="${fill}"/>`;
+      }
+    }
+  }
+
+  for(let gy=0;gy<p.h;gy+=tileH){
+    for(let gx=0;gx<p.w;gx+=tileW){
+      const {r,g,b}=avgCell(gx,gy);
+      /* apply invert at pixel level already done in getLum; for color mode we handle raw */
+      const rv=invertActive?255-r:r;
+      const gv=invertActive?255-g:g;
+      const bv=invertActive?255-b:b;
+
+      let fill;
+      if(p.mosaicColorMode==='avg'){
+        fill=toHex(rv,gv,bv);
+      } else if(p.mosaicColorMode==='mono2'){
+        const lum=(0.299*rv+0.587*gv+0.114*bv)/255;
+        fill=lum>0.5?bg:inkFg;
+      } else { /* posterize */
+        const lvl=p.mosaicPoster;
+        fill=toHex(posterCh(rv,lvl),posterCh(gv,lvl),posterCh(bv,lvl));
+      }
+
+      /* skip bg-colored tiles in mono2 to keep gap visible */
+      if(p.mosaicColorMode==='mono2' && fill===bg) continue;
+
+      const drawW=tileW-gap, drawH=tileH-gap;
+      if(drawW<=0||drawH<=0) continue;
+      const cx=gx+tileW/2, cy=gy+tileH/2;
+      parts.push(tileShape(cx,cy,drawW,drawH,fill));
+    }
+  }
+
+  parts.push('</svg>');
+  return parts.join('\n');
+}
+
+/* ─────────── LAYER5 字符分层 ─────────────────────────────────────────
+   亮度从暗到亮分 5 层（所有元素固定大小，无透明度，严格正方形/细线）：
+   [0   ~ T1)  → 细竖线       ← 最暗/大黑色面积（细线非长方形）
+   [T1  ~ T2)  → 大正方块
+   [T2  ~ T3)  → 小正方块
+   [T3  ~ T4)  → 随机字母     ← 边缘过渡
+   [T4  ~ 1 ]  → 微点阵       ← 最亮/高光区
+   渐变（gradDir / gradSize）：对 lum 施加位置偏移，越靠渐变方向末端越亮
+──────────────────────────────────────────────────────────────────── */
+function buildLayer5Svg(p, idata){
+  const bg   = p.isDarkBg ? '#0a0908' : '#f7f5f2';
+  const ink  = p.isDarkBg ? '#ffffff' : '#0a0908';
+  const cell = p.l5Cell;
+  const gap  = p.l5Gap;
+
+  /* ── 所有元素固定尺寸，严格正方形 ── */
+  const LINE_W  = Math.max(0.5, cell * p.l5LineWPct);  // 细线宽（用户控制）
+  const LINE_H  = cell - gap;                           // 细线高 = 格高（保持线状）
+  const BIG_SZ  = cell - gap;                           // 大方块：正方形 ✓
+  const SML_SZ  = Math.max(1, Math.round((cell - gap) * 0.46)); // 小方块：正方形 ✓
+  const CHAR_SZ = Math.max(4, (cell - gap) * 0.85);    // 字符字号
+  const DOT_R   = Math.max(0.4, (cell - gap) * 0.5 * p.l5DotPct); // 微点半径
+
+  const chars = p.l5Chars;
+  const parts = [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${p.w}" height="${p.h}" viewBox="0 0 ${p.w} ${p.h}" font-family="monospace">`,
+    `<rect width="100%" height="100%" fill="${bg}"/>`
+  ];
+  seed = 0xDECAFBAD;
+
+  /* ── 渐变：计算 lum 偏移量（与 classic 模式同逻辑） ── */
+  function gradOffset(gx, gy){
+    if(p.gradDirVal === 'none' || p.gradSize === 0) return 0;
+    const n = p.gradDirVal === 'h' ? gx / p.w : gy / p.h; // 0→1
+    // 范围：-gradSize*0.5 → +gradSize*0.5，让亮度沿方向线性偏移
+    return p.gradSize * (n - 0.5);
+  }
+
+  for(let gy = 0; gy < p.h; gy += cell){
+    for(let gx = 0; gx < p.w; gx += cell){
+      const ix = clamp(Math.floor(gx + cell * 0.5), 0, p.w - 1);
+      const iy = clamp(Math.floor(gy + cell * 0.5), 0, p.h - 1);
+      let lum = getLum(idata, p.w, ix, iy);
+      // 叠加渐变偏移，clamp 到 [0,1]
+      lum = clamp(lum + gradOffset(gx, gy), 0, 1);
+
+      const cx = gx + cell * 0.5;
+      const cy = gy + cell * 0.5;
+
+      if(lum < p.l5T1){
+        /* 层1：细竖线（非矩形，宽度极细） */
+        const x  = cx.toFixed(2);
+        const y1 = (cy - LINE_H / 2).toFixed(2);
+        const y2 = (cy + LINE_H / 2).toFixed(2);
+        parts.push(`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${ink}" stroke-width="${LINE_W.toFixed(2)}" stroke-linecap="butt"/>`);
+
+      } else if(lum < p.l5T2){
+        /* 层2：大正方块 */
+        const h  = BIG_SZ / 2;
+        const rx = (BIG_SZ * 0.05).toFixed(2);
+        parts.push(`<rect x="${(cx-h).toFixed(2)}" y="${(cy-h).toFixed(2)}" width="${BIG_SZ.toFixed(2)}" height="${BIG_SZ.toFixed(2)}" rx="${rx}" ry="${rx}" fill="${ink}"/>`);
+
+      } else if(lum < p.l5T3){
+        /* 层3：小正方块 */
+        const h  = SML_SZ / 2;
+        const rx = (SML_SZ * 0.08).toFixed(2);
+        parts.push(`<rect x="${(cx-h).toFixed(2)}" y="${(cy-h).toFixed(2)}" width="${SML_SZ.toFixed(2)}" height="${SML_SZ.toFixed(2)}" rx="${rx}" ry="${rx}" fill="${ink}"/>`);
+
+      } else if(lum < p.l5T4){
+        /* 层4：随机字母，固定字号，不透明 */
+        const ch = chars[Math.floor(rng() * chars.length)] || 'A';
+        parts.push(`<text x="${cx.toFixed(2)}" y="${cy.toFixed(2)}" font-size="${CHAR_SZ.toFixed(2)}" fill="${ink}" text-anchor="middle" dominant-baseline="middle">${ch}</text>`);
+
+      } else {
+        /* 层5：微点（高光区） */
+        if(DOT_R >= 0.4){
+          parts.push(`<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${DOT_R.toFixed(2)}" fill="${ink}"/>`);
+        }
+      }
+    }
+  }
+
+  parts.push('</svg>');
+  return parts.join('\n');
+}
+
+/* ─────────── render ─────────── */
+let renderTimer=null;
+function render(){
+  clearTimeout(renderTimer);
+  renderTimer=setTimeout(_doRender,60);
+}
+function _doRender(){
+  if(!srcCanvas.width||!srcCanvas.height) return;
+  const p=getParams();
+  const ctx=srcCanvas.getContext('2d');
+  const idata=ctx.getImageData(0,0,p.w,p.h).data;
+  lastSvgStr=p.isLayer5?buildLayer5Svg(p,idata):p.isMosaic?buildMosaicSvg(p,idata):p.isOpc?buildOpcSvg(p,idata):buildClassicSvg(p,idata);
+  const blob=new Blob([lastSvgStr],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+  img.onload=()=>{
+    outCanvas.width=p.w; outCanvas.height=p.h;
+    const oc=outCanvas.getContext('2d');
+    oc.clearRect(0,0,p.w,p.h);
+    oc.drawImage(img,0,0,p.w,p.h);
+    URL.revokeObjectURL(url);
+  };
+  img.src=url;
+}
+
+/* ─────────── downloads ─────────── */
+btnDlSvg.addEventListener('click',()=>{
+  if(!lastSvgStr) return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lastSvgStr],{type:'image/svg+xml'}));
+  a.download=`halftone-${outCanvas.width}x${outCanvas.height}.svg`;
+  a.click(); URL.revokeObjectURL(a.href);
+});
+btnDlPng.addEventListener('click',()=>{
+  if(!outCanvas.width) return;
+  outCanvas.toBlob(blob=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`halftone-${outCanvas.width}x${outCanvas.height}.png`;
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+});
+btnInvert.addEventListener('click',()=>{
+  invertActive=!invertActive;
+  btnInvert.classList.toggle('active',invertActive);
+  render();
+});
+
+togglePanels();
+</script>
+</body>
+</html>

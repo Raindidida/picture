@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Meetup — 海报套组</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #07051A;
+    --surface:  #110E30;
+    --card:     rgba(18, 14, 50, 0.85);
+    --purple:   #8B5CF6;
+    --purple-l: #A78BFA;
+    --cyan:     #06B6D4;
+    --coral:    #FF6040;
+    --amber:    #F59E0B;
+    --white:    #F8FAFC;
+    --muted:    #94A3B8;
+    --border:   rgba(139,92,246,0.25);
+  }
+
+  body {
+    background: #0A0820;
+    font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--white);
+    padding: 24px 16px 60px;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(7,5,26,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 12px 24px;
+  }
+  .tb-title { font-size: 13px; color: var(--muted); letter-spacing: .05em; }
+  .tb-counter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; color: var(--purple-l); min-width: 60px; text-align: center;
+  }
+  .tb-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--white); cursor: pointer; border-radius: 8px;
+    padding: 6px 16px; font-size: 14px; transition: all .2s;
+  }
+  .tb-btn:hover { background: var(--purple); border-color: var(--purple); }
+
+  /* ── Slide Viewer ── */
+  .viewer {
+    margin-top: 72px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .arrow-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--white); width: 44px; height: 44px; border-radius: 50%;
+    font-size: 20px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; transition: all .2s;
+  }
+  .arrow-btn:hover { background: var(--purple); border-color: var(--purple); }
+
+  .slides-wrap {
+    width: 480px;
+    position: relative;
+  }
+
+  /* ── Slide Base ── */
+  .slide {
+    display: none;
+    width: 480px;
+    min-height: 854px; /* 9:16 approx */
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px var(--border);
+  }
+  .slide.active { display: flex; }
+
+  /* ── Dot Nav ── */
+  .dot-nav {
+    display: flex; gap: 8px; justify-content: center; margin-top: 20px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(139,92,246,0.3); cursor: pointer; transition: all .2s;
+  }
+  .dot.active { background: var(--purple-l); width: 24px; border-radius: 4px; }
+
+  /* ── Slide Labels ── */
+  .slide-labels {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-top: 16px; max-width: 520px;
+  }
+  .slide-label {
+    font-size: 11px; padding: 4px 12px; border-radius: 99px;
+    border: 1px solid var(--border); color: var(--muted); cursor: pointer;
+    transition: all .2s;
+  }
+  .slide-label:hover, .slide-label.active {
+    background: var(--purple); border-color: var(--purple); color: white;
+  }
+
+  /* ════════════════════════════════
+     POSTER 1 — MAIN EVENT
+  ════════════════════════════════ */
+  .p1 {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,92,246,0.45) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255,96,64,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 0% 60%, rgba(6,182,212,0.2) 0%, transparent 60%);
+  }
+  .p1-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .p1-inner { position: relative; z-index: 2; padding: 40px 36px 36px; display: flex; flex-direction: column; flex: 1; }
+
+  .logo-row { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; }
+  .logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .12em; color: var(--white); }
+  .logo-badge {
+    margin-left: auto; font-size: 10px; padding: 3px 10px; border-radius: 99px;
+    background: rgba(139,92,246,0.2); border: 1px solid var(--purple);
+    color: var(--purple-l); letter-spacing: .08em; text-transform: uppercase;
+  }
+
+  .p1-hero { margin-top: 36px; }
+  .p1-sub-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 16px;
+  }
+  .p1-sub-tag::before {
+    content: ''; width: 24px; height: 1px; background: var(--cyan);
+  }
+  .p1-main-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px; line-height: .95;
+    letter-spacing: .04em;
+    background: linear-gradient(135deg, #fff 0%, var(--purple-l) 50%, var(--cyan) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .p1-sub-title {
+    margin-top: 18px; font-size: 13.5px; line-height: 1.6;
+    color: var(--muted); font-weight: 400;
+    border-left: 2px solid var(--coral); padding-left: 12px;
+  }
+  .p1-sub-title strong { color: var(--white); font-weight: 600; }
+
+  .p1-divider {
+    margin: 28px 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple), var(--cyan), transparent);
+  }
+
+  .info-blocks { display: flex; flex-direction: column; gap: 14px; }
+  .info-block {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(139,92,246,0.08); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .info-icon {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .info-icon.time { background: rgba(139,92,246,0.2); }
+  .info-icon.loc  { background: rgba(6,182,212,0.15); }
+  .info-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 2px; }
+  .info-val { font-size: 15px; font-weight: 600; color: var(--white); }
+  .info-sub { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+  .p1-cta { margin-top: auto; padding-top: 28px; }
+  .cta-inner {
+    background: rgba(139,92,246,0.1); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; gap: 20px; align-items: center;
+  }
+  .qr-wrap {
+    background: white; border-radius: 10px; padding: 8px; flex-shrink: 0;
+    width: 100px; height: 100px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qr-wrap img { width: 84px; height: 84px; }
+  .cta-text { flex: 1; }
+  .cta-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--cyan); margin-bottom: 6px; }
+  .cta-heading { font-size: 16px; font-weight: 700; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
+  .cta-url { font-size: 11px; color: var(--purple-l); word-break: break-all; }
+
+  .p1-footer {
+    margin-top: 24px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .p1-footer-tag { font-size: 11px; color: var(--muted); }
+  .p1-footer-tag strong { color: var(--coral); }
+
+  /* ════════════════════════════════
+     POSTER 2 — ALL SPEAKERS
+  ════════════════════════════════ */
+  .p2 {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(139,92,246,0.4) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 10% 90%, rgba(6,182,212,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 90% 70%, rgba(255,96,64,0.2) 0%, transparent 60%);
+  }
+  .p2-inner { position: relative; z-index: 2; padding: 36px 32px; display: flex; flex-direction: column; flex: 1; }
+  .section-eyebrow {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--cyan); opacity: .4; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px; letter-spacing: .06em;
+    background: linear-gradient(135deg, #fff 20%, var(--purple-l) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 28px;
+  }
+
+  .speakers-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    flex: 1;
+  }
+  .spk-card {
+    background: rgba(18,14,50,0.8); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 14px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    transition: border-color .2s;
+    position: relative; overflow: hidden;
+  }
+  .spk-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), transparent);
+    pointer-events: none;
+  }
+  .spk-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: white;
+    margin-bottom: 12px; flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.15);
+    position: relative; z-index: 1;
+  }
+  .spk-name { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 6px; line-height: 1.2; }
+  .spk-role { font-size: 10.5px; color: var(--muted); line-height: 1.5; }
+  .spk-role em { font-style: normal; color: var(--purple-l); font-weight: 500; }
+
+  .p2-footer {
+    margin-top: 24px; padding: 14px 16px;
+    background: rgba(139,92,246,0.08); border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .p2-footer-date { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--white); letter-spacing: .06em; }
+  .p2-footer-loc { font-size: 11px; color: var(--muted); text-align: right; max-width: 160px; }
+
+  /* ════════════════════════════════
+     POSTERS 3-8 — INDIVIDUAL SPEAKER
+  ════════════════════════════════ */
+  .spk-solo {
+    background: var(--bg);
+  }
+  .spk-solo-inner {
+    position: relative; z-index: 2; padding: 36px 36px 32px;
+    display: flex; flex-direction: column; flex: 1;
+  }
+  .spk-solo-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    overflow: hidden; border-radius: 20px;
+  }
+  .spk-solo-orb1 {
+    position: absolute; width: 320px; height: 320px; border-radius: 50%;
+    top: -60px; right: -80px; filter: blur(80px);
+    opacity: 0.4;
+  }
+  .spk-solo-orb2 {
+    position: absolute; width: 250px; height: 250px; border-radius: 50%;
+    bottom: 60px; left: -80px; filter: blur(70px);
+    opacity: 0.3;
+  }
+
+  .spk-solo-logo { display: flex; align-items: center; gap: 8px; }
+  .spk-solo-logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .1em; color: rgba(255,255,255,0.7); }
+
+  .spk-solo-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 24px 0; }
+
+  .spk-solo-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 120px; line-height: 1;
+    position: absolute; right: 24px; top: 80px;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -.02em;
+    pointer-events: none;
+  }
+
+  .spk-solo-avatar {
+    width: 160px; height: 160px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: white;
+    position: relative; margin-bottom: 28px;
+  }
+  .spk-solo-avatar::after {
+    content: '';
+    position: absolute; inset: -4px; border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--purple), var(--cyan), var(--coral), var(--purple));
+    z-index: -1;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .spk-solo-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px; letter-spacing: .06em; text-align: center; line-height: 1;
+    color: var(--white); margin-bottom: 4px;
+  }
+  .spk-solo-title-tag {
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 99px;
+    border: 1px solid var(--purple); color: var(--purple-l);
+    margin-bottom: 20px;
+  }
+  .spk-solo-bio {
+    text-align: center; max-width: 320px;
+  }
+  .spk-solo-bio p {
+    font-size: 12.5px; color: var(--muted); line-height: 1.65; margin-bottom: 6px;
+  }
+  .spk-solo-bio p strong { color: var(--white); font-weight: 600; }
+
+  .spk-solo-divider {
+    width: 60px; height: 2px; border-radius: 1px; margin: 20px auto;
+  }
+
+  .spk-solo-footer {
+    margin-top: auto; padding: 16px 20px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .spk-solo-footer-info { }
+  .spk-solo-footer-date { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .06em; color: var(--white); }
+  .spk-solo-footer-time { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .spk-solo-qr { background: white; border-radius: 6px; padding: 4px; }
+  .spk-solo-qr img { width: 52px; height: 52px; }
+
+  /* Speaker color themes */
+  .theme-purple .spk-solo-avatar { background: linear-gradient(135deg, #6D28D9, #8B5CF6); }
+  .theme-purple .spk-solo-orb1 { background: #7C3AED; }
+  .theme-purple .spk-solo-orb2 { background: #4338CA; }
+  .theme-purple .spk-solo-divider { background: linear-gradient(90deg, #7C3AED, #8B5CF6); }
+
+  .theme-blue .spk-solo-avatar { background: linear-gradient(135deg, #1D4ED8, #3B82F6); }
+  .theme-blue .spk-solo-orb1 { background: #2563EB; }
+  .theme-blue .spk-solo-orb2 { background: #0284C7; }
+  .theme-blue .spk-solo-divider { background: linear-gradient(90deg, #3B82F6, #06B6D4); }
+  .theme-blue .spk-solo-avatar::after { background: conic-gradient(from 0deg, #3B82F6, #06B6D4, #8B5CF6, #3B82F6); }
+
+  .theme-cyan .spk-solo-avatar { background: linear-gradient(135deg, #0E7490, #06B6D4); }
+  .theme-cyan .spk-solo-orb1 { background: #06B6D4; }
+  .theme-cyan .spk-solo-orb2 { background: #0891B2; }
+  .theme-cyan .spk-solo-divider { background: linear-gradient(90deg, #06B6D4, #22D3EE); }
+  .theme-cyan .spk-solo-avatar::after { background: conic-gradient(from 0deg, #06B6D4, #22D3EE, #8B5CF6, #06B6D4); }
+
+  .theme-green .spk-solo-avatar { background: linear-gradient(135deg, #065F46, #059669); }
+  .theme-green .spk-solo-orb1 { background: #059669; }
+  .theme-green .spk-solo-orb2 { background: #10B981; }
+  .theme-green .spk-solo-divider { background: linear-gradient(90deg, #10B981, #34D399); }
+  .theme-green .spk-solo-avatar::after { background: conic-gradient(from 0deg, #059669, #34D399, #06B6D4, #059669); }
+
+  .theme-orange .spk-solo-avatar { background: linear-gradient(135deg, #C2410C, #F97316); }
+  .theme-orange .spk-solo-orb1 { background: #F97316; }
+  .theme-orange .spk-solo-orb2 { background: #EF4444; }
+  .theme-orange .spk-solo-divider { background: linear-gradient(90deg, #F97316, #FBBF24); }
+  .theme-orange .spk-solo-avatar::after { background: conic-gradient(from 0deg, #F97316, #FBBF24, #EF4444, #F97316); }
+
+  .theme-pink .spk-solo-avatar { background: linear-gradient(135deg, #9D174D, #EC4899); }
+  .theme-pink .spk-solo-orb1 { background: #EC4899; }
+  .theme-pink .spk-solo-orb2 { background: #A855F7; }
+  .theme-pink .spk-solo-divider { background: linear-gradient(90deg, #EC4899, #F9A8D4); }
+  .theme-pink .spk-solo-avatar::after { background: conic-gradient(from 0deg, #EC4899, #F9A8D4, #8B5CF6, #EC4899); }
+
+  /* Speaker avatar colors for grid */
+  .av-purple { background: linear-gradient(135deg, #6D28D9, #8B5CF6); }
+  .av-blue   { background: linear-gradient(135deg, #1D4ED8, #3B82F6); }
+  .av-cyan   { background: linear-gradient(135deg, #0E7490, #06B6D4); }
+  .av-green  { background: linear-gradient(135deg, #065F46, #059669); }
+  .av-orange { background: linear-gradient(135deg, #C2410C, #F97316); }
+  .av-pink   { background: linear-gradient(135deg, #9D174D, #EC4899); }
+
+  /* Noise overlay */
+  .noise {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.025; border-radius: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Toolbar ── -->
+<div class="toolbar">
+  <span class="tb-title">OpenClaw Meetup · 海报套组</span>
+  <button class="tb-btn" onclick="navigate(-1)">←</button>
+  <span class="tb-counter" id="counter">1 / 8</span>
+  <button class="tb-btn" onclick="navigate(1)">→</button>
+</div>
+
+<div class="viewer">
+  <button class="arrow-btn" onclick="navigate(-1)">&#8592;</button>
+
+  <div>
+    <div class="slides-wrap">
+
+      <!-- ══════════════════════════════════
+           SLIDE 1 · MAIN EVENT POSTER
+      ══════════════════════════════════ -->
+      <div class="slide p1 active" id="slide-0">
+        <div class="p1-grid"></div>
+        <div class="noise"></div>
+        <div class="p1-inner">
+
+          <!-- Logo Row -->
+          <div class="logo-row">
+            <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="17" stroke="#8B5CF6" stroke-width="1.5" opacity=".4"/>
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M10 22 L6 25 M10 22 L8 26.5" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <circle cx="18" cy="18" r="2.5" fill="#8B5CF6"/>
+            </svg>
+            <span class="logo-text">OPENCLAW</span>
+            <span class="logo-badge">Meetup</span>
+          </div>
+
+          <!-- Hero -->
+          <div class="p1-hero">
+            <div class="p1-sub-tag">AI Community · Shenzhen 2025</div>
+            <div class="p1-main-title">OPENCLAW<br>MEETUP</div>
+            <p class="p1-sub-title">
+              <strong>从 0 到 1，亲手激活你的 AI 龙虾</strong><br>
+              3 小时沉浸式实战：看得见·装得上·用得好<br>
+              带着电脑来，带着灵感走！
+            </p>
+          </div>
+
+          <div class="p1-divider"></div>
+
+          <!-- Info Blocks -->
+          <div class="info-blocks">
+            <div class="info-block">
+              <div class="info-icon time">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+              </div>
+              <div>
+                <div class="info-label">时间 / Date &amp; Time</div>
+                <div class="info-val">3 月 8 日（本周日）</div>
+                <div class="info-sub">14:00 – 17:30</div>
+              </div>
+            </div>
+            <div class="info-block">
+              <div class="info-icon loc">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2" stroke-linecap="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div>
+                <div class="info-label">地点 / Location</div>
+                <div class="info-val">前海嘉里中心 T2</div>
+                <div class="info-sub">深圳市南山区</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="p1-cta">
+            <div class="cta-inner">
+              <div class="qr-wrap">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=84x84&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" alt="QR Code" width="84" height="84">
+              </div>
+              <div class="cta-text">
+                <div class="cta-label">扫码立即报名</div>
+                <div class="cta-heading">免费参与<br>限额报名</div>
+                <div class="cta-url">luma.com/whbt1o1h</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p1-footer">
+            <span class="p1-footer-tag">主办：<strong>OpenClaw Community</strong></span>
+            <span class="p1-footer-tag" style="color:#8B5CF6">— AI × 实战 × 龙虾 —</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 2 · ALL SPEAKERS
+      ══════════════════════════════════ -->
+      <div class="slide p2" id="slide-1">
+        <div class="noise"></div>
+        <div class="p2-inner">
+
+          <div class="logo-row" style="margin-bottom:24px">
+            <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="logo-text">OPENCLAW MEETUP</span>
+          </div>
+
+          <div class="section-eyebrow">嘉宾阵容</div>
+          <div class="section-title">SPEAKERS</div>
+
+          <div class="speakers-grid">
+
+            <!-- Speaker 1: 郭沙 博士 -->
+            <div class="spk-card">
+              <div class="spk-avatar av-purple">GS</div>
+              <div class="spk-name">郭沙 博士</div>
+              <div class="spk-role">
+                <em>CS PhD · FIU</em><br>
+                清华计算机本硕<br>美国 FIU 博士
+              </div>
+            </div>
+
+            <!-- Speaker 2: 严 博士 -->
+            <div class="spk-card">
+              <div class="spk-avatar av-blue">Y</div>
+              <div class="spk-name">严 博士</div>
+              <div class="spk-role">
+                <em>CTO · AI Chip Startup</em><br>
+                台大本硕<br>CMU 博士
+              </div>
+            </div>
+
+            <!-- Speaker 3: Mai Yang -->
+            <div class="spk-card">
+              <div class="spk-avatar av-cyan">MY</div>
+              <div class="spk-name">Mai Yang</div>
+              <div class="spk-role">
+                <em>Cursor 中文区大使</em><br>
+                Cursor Official<br>Ambassador
+              </div>
+            </div>
+
+            <!-- Speaker 4: Jia Zou -->
+            <div class="spk-card">
+              <div class="spk-avatar av-green">JZ</div>
+              <div class="spk-name">Jia Zou</div>
+              <div class="spk-role">
+                <em>Roblox 中国负责人</em><br>
+                Gaming &amp; Metaverse<br>Platform Leader
+              </div>
+            </div>
+
+            <!-- Speaker 5: Rex Zheng -->
+            <div class="spk-card">
+              <div class="spk-avatar av-orange">RZ</div>
+              <div class="spk-name">Rex Zheng</div>
+              <div class="spk-role">
+                <em>CEO · Angel Investor</em><br>
+                Mizu Financial<br>天使投资人
+              </div>
+            </div>
+
+            <!-- Speaker 6: Opacity -->
+            <div class="spk-card">
+              <div class="spk-avatar av-pink">OP</div>
+              <div class="spk-name">Opacity</div>
+              <div class="spk-role">
+                <em>独立开发大神</em><br>
+                Independent<br>Developer
+              </div>
+            </div>
+
+          </div>
+
+          <div class="p2-footer">
+            <div>
+              <div class="p2-footer-date">3月8日 周日</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">14:00 – 17:30</div>
+            </div>
+            <div class="p2-footer-loc">
+              深圳市南山区<br>前海嘉里中心 T2
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 3 · SPEAKER: 郭沙 博士
+      ══════════════════════════════════ -->
+      <div class="slide spk-solo theme-purple" id="slide-2">
+        <div class="spk-solo-bg">
+          <div class="spk-solo-orb1"></div>
+          <div class="spk-solo-orb2"></div>
+        </div>
+        <div class="noise"></div>
+        <div class="spk-solo-inner">
+          <div class="spk-solo-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="spk-solo-logo-text">OPENCLAW MEETUP · 嘉宾</span>
+          </div>
+          <div class="spk-solo-number">01</div>
+
+          <div class="spk-solo-center">
+            <div class="spk-solo-avatar">GS</div>
+            <div class="spk-solo-name">郭沙 博士</div>
+            <div class="spk-solo-title-tag">Guest Speaker</div>
+            <div class="spk-solo-divider"></div>
+            <div class="spk-solo-bio">
+              <p><strong>清华大学</strong> 计算机本科 / 硕士</p>
+              <p><strong>美国 FIU</strong> 计算机硕士、博士</p>
+            </div>
+          </div>
+
+          <div class="spk-solo-footer">
+            <div class="spk-solo-footer-info">
+              <div class="spk-solo-footer-date">3月8日（周日）</div>
+              <div class="spk-solo-footer-time">14:00 – 17:30 · 前海嘉里中心 T2</div>
+            </div>
+            <div class="spk-solo-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=52x52&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" width="52" height="52" alt="QR">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 4 · SPEAKER: 严 博士
+      ══════════════════════════════════ -->
+      <div class="slide spk-solo theme-blue" id="slide-3">
+        <div class="spk-solo-bg">
+          <div class="spk-solo-orb1"></div>
+          <div class="spk-solo-orb2"></div>
+        </div>
+        <div class="noise"></div>
+        <div class="spk-solo-inner">
+          <div class="spk-solo-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="spk-solo-logo-text">OPENCLAW MEETUP · 嘉宾</span>
+          </div>
+          <div class="spk-solo-number">02</div>
+
+          <div class="spk-solo-center">
+            <div class="spk-solo-avatar">Y</div>
+            <div class="spk-solo-name">严 博士</div>
+            <div class="spk-solo-title-tag">AI Chip CTO</div>
+            <div class="spk-solo-divider"></div>
+            <div class="spk-solo-bio">
+              <p><strong>台湾大学</strong> 本科 / 硕士</p>
+              <p><strong>Carnegie Mellon University</strong> 博士</p>
+              <p>AI 芯片创业公司 <strong>CTO</strong><br>专注 AI 专用加速芯片设计</p>
+            </div>
+          </div>
+
+          <div class="spk-solo-footer">
+            <div class="spk-solo-footer-info">
+              <div class="spk-solo-footer-date">3月8日（周日）</div>
+              <div class="spk-solo-footer-time">14:00 – 17:30 · 前海嘉里中心 T2</div>
+            </div>
+            <div class="spk-solo-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=52x52&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" width="52" height="52" alt="QR">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 5 · SPEAKER: Mai Yang
+      ══════════════════════════════════ -->
+      <div class="slide spk-solo theme-cyan" id="slide-4">
+        <div class="spk-solo-bg">
+          <div class="spk-solo-orb1"></div>
+          <div class="spk-solo-orb2"></div>
+        </div>
+        <div class="noise"></div>
+        <div class="spk-solo-inner">
+          <div class="spk-solo-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="spk-solo-logo-text">OPENCLAW MEETUP · 嘉宾</span>
+          </div>
+          <div class="spk-solo-number">03</div>
+
+          <div class="spk-solo-center">
+            <div class="spk-solo-avatar">MY</div>
+            <div class="spk-solo-name">Mai Yang</div>
+            <div class="spk-solo-title-tag">Cursor Ambassador</div>
+            <div class="spk-solo-divider"></div>
+            <div class="spk-solo-bio">
+              <p><strong>Cursor 中文区大使</strong></p>
+              <p>Cursor Official<br>Chinese Community Ambassador</p>
+            </div>
+          </div>
+
+          <div class="spk-solo-footer">
+            <div class="spk-solo-footer-info">
+              <div class="spk-solo-footer-date">3月8日（周日）</div>
+              <div class="spk-solo-footer-time">14:00 – 17:30 · 前海嘉里中心 T2</div>
+            </div>
+            <div class="spk-solo-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=52x52&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" width="52" height="52" alt="QR">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 6 · SPEAKER: Jia Zou
+      ══════════════════════════════════ -->
+      <div class="slide spk-solo theme-green" id="slide-5">
+        <div class="spk-solo-bg">
+          <div class="spk-solo-orb1"></div>
+          <div class="spk-solo-orb2"></div>
+        </div>
+        <div class="noise"></div>
+        <div class="spk-solo-inner">
+          <div class="spk-solo-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="spk-solo-logo-text">OPENCLAW MEETUP · 嘉宾</span>
+          </div>
+          <div class="spk-solo-number">04</div>
+
+          <div class="spk-solo-center">
+            <div class="spk-solo-avatar">JZ</div>
+            <div class="spk-solo-name">Jia Zou</div>
+            <div class="spk-solo-title-tag">Roblox China Lead</div>
+            <div class="spk-solo-divider"></div>
+            <div class="spk-solo-bio">
+              <p><strong>Roblox 中国负责人</strong></p>
+              <p>Gaming &amp; Metaverse<br>Platform Leader</p>
+            </div>
+          </div>
+
+          <div class="spk-solo-footer">
+            <div class="spk-solo-footer-info">
+              <div class="spk-solo-footer-date">3月8日（周日）</div>
+              <div class="spk-solo-footer-time">14:00 – 17:30 · 前海嘉里中心 T2</div>
+            </div>
+            <div class="spk-solo-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=52x52&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" width="52" height="52" alt="QR">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 7 · SPEAKER: Rex Zheng
+      ══════════════════════════════════ -->
+      <div class="slide spk-solo theme-orange" id="slide-6">
+        <div class="spk-solo-bg">
+          <div class="spk-solo-orb1"></div>
+          <div class="spk-solo-orb2"></div>
+        </div>
+        <div class="noise"></div>
+        <div class="spk-solo-inner">
+          <div class="spk-solo-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="spk-solo-logo-text">OPENCLAW MEETUP · 嘉宾</span>
+          </div>
+          <div class="spk-solo-number">05</div>
+
+          <div class="spk-solo-center">
+            <div class="spk-solo-avatar">RZ</div>
+            <div class="spk-solo-name">Rex Zheng</div>
+            <div class="spk-solo-title-tag">CEO · Angel Investor</div>
+            <div class="spk-solo-divider"></div>
+            <div class="spk-solo-bio">
+              <p><strong>Mizu Financial</strong> CEO</p>
+              <p>天使投资人<br>Angel Investor</p>
+            </div>
+          </div>
+
+          <div class="spk-solo-footer">
+            <div class="spk-solo-footer-info">
+              <div class="spk-solo-footer-date">3月8日（周日）</div>
+              <div class="spk-solo-footer-time">14:00 – 17:30 · 前海嘉里中心 T2</div>
+            </div>
+            <div class="spk-solo-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=52x52&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" width="52" height="52" alt="QR">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SLIDE 8 · SPEAKER: Opacity
+      ══════════════════════════════════ -->
+      <div class="slide spk-solo theme-pink" id="slide-7">
+        <div class="spk-solo-bg">
+          <div class="spk-solo-orb1"></div>
+          <div class="spk-solo-orb2"></div>
+        </div>
+        <div class="noise"></div>
+        <div class="spk-solo-inner">
+          <div class="spk-solo-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M10 22 C10 22, 10 12, 18 10 C26 8, 28 16, 24 19" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M24 19 L29 16 M24 19 L27 23" stroke="#FF6040" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="spk-solo-logo-text">OPENCLAW MEETUP · 嘉宾</span>
+          </div>
+          <div class="spk-solo-number">06</div>
+
+          <div class="spk-solo-center">
+            <div class="spk-solo-avatar">OP</div>
+            <div class="spk-solo-name">Opacity</div>
+            <div class="spk-solo-title-tag">独立开发者</div>
+            <div class="spk-solo-divider"></div>
+            <div class="spk-solo-bio">
+              <p><strong>独立开发大神</strong></p>
+              <p>Independent Developer<br>Builder · Creator</p>
+            </div>
+          </div>
+
+          <div class="spk-solo-footer">
+            <div class="spk-solo-footer-info">
+              <div class="spk-solo-footer-date">3月8日（周日）</div>
+              <div class="spk-solo-footer-time">14:00 – 17:30 · 前海嘉里中心 T2</div>
+            </div>
+            <div class="spk-solo-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=52x52&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=08061A&margin=0" width="52" height="52" alt="QR">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- slides-wrap -->
+
+    <!-- Dot Nav -->
+    <div class="dot-nav" id="dotNav"></div>
+
+    <!-- Slide Labels -->
+    <div class="slide-labels" id="slideLabels"></div>
+  </div>
+
+  <button class="arrow-btn" onclick="navigate(1)">&#8594;</button>
+</div>
+
+<script>
+  const LABELS = [
+    '主海报',
+    '嘉宾合集',
+    '郭沙 博士',
+    '严 博士',
+    'Mai Yang',
+    'Jia Zou',
+    'Rex Zheng',
+    'Opacity',
+  ];
+  const TOTAL = 8;
+  let current = 0;
+
+  const slides = document.querySelectorAll('.slide');
+  const dotNav = document.getElementById('dotNav');
+  const slideLabels = document.getElementById('slideLabels');
+  const counter = document.getElementById('counter');
+
+  // Build dots
+  LABELS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotNav.appendChild(d);
+  });
+
+  // Build labels
+  LABELS.forEach((label, i) => {
+    const l = document.createElement('span');
+    l.className = 'slide-label' + (i === 0 ? ' active' : '');
+    l.textContent = label;
+    l.onclick = () => goTo(i);
+    slideLabels.appendChild(l);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    document.querySelectorAll('.dot')[current].classList.remove('active');
+    document.querySelectorAll('.slide-label')[current].classList.remove('active');
+
+    current = (n + TOTAL) % TOTAL;
+
+    slides[current].classList.add('active');
+    document.querySelectorAll('.dot')[current].classList.add('active');
+    document.querySelectorAll('.slide-label')[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${TOTAL}`;
+  }
+
+  function navigate(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+  });
+</script>
+
+</body>
+</html>

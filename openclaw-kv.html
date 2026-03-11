@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>OpenClaw Meetup — KV 16:9</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background:#111; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    min-height:100vh; padding:28px 20px;
+    font-family:'Space Grotesk','Noto Sans SC',Helvetica,Arial,sans-serif;
+  }
+
+  /* ── 16:9 poster ── */
+  #poster {
+    position:relative;
+    width:min(1280px,96vw);
+    aspect-ratio:16/9;
+    overflow:hidden;
+    box-shadow:0 48px 140px rgba(0,0,0,.85);
+    background:#f4f3ee;
+  }
+
+  /* Layer 1 – dot grid BG */
+  #bgCanvas  { position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+
+  /* Layer 2 – halftone lobster (drawn via JS onto this canvas) */
+  #lobCanvas { position:absolute; inset:0; width:100%; height:100%; z-index:2;
+               mix-blend-mode:multiply; }
+
+  /* Layer 3 – typography */
+  .ov { position:absolute; z-index:10; pointer-events:none; }
+
+  /* thin grid rules */
+  .vl,.hl { position:absolute; z-index:8; background:rgba(0,0,0,.1); }
+  .vl { top:0; bottom:0; width:1px; }
+  .hl { left:0; right:0; height:1px; }
+
+  /* ── text styles ── */
+  .badge {
+    top:5.5%; left:4%;
+    font-size:clamp(6.5px,.7vw,9.5px);
+    letter-spacing:.2em; text-transform:uppercase; color:#555; font-weight:500;
+    display:flex; align-items:center; gap:.6em;
+  }
+  .badge::before { content:''; width:clamp(12px,1.4vw,18px); height:1px; background:#555; }
+
+  .info-col { top:20%; left:4%; display:flex; flex-direction:column; gap:clamp(8px,1.4vh,18px); }
+  .info-block {}
+  .ilabel {
+    font-size:clamp(5.5px,.62vw,8.5px); font-weight:700; text-transform:uppercase;
+    letter-spacing:.15em; color:#0a0a0a; margin-bottom:.28em;
+  }
+  .ival { font-size:clamp(7.5px,.85vw,11px); font-weight:400; color:#222; line-height:1.55; }
+  .ival strong { font-weight:700; color:#0a0a0a; }
+  .irule { width:26px; height:1px; background:#0a0a0a; margin:clamp(4px,.8vh,10px) 0; }
+
+  .arrow-tag {
+    top:62%; left:4.2%;
+    display:flex; align-items:center; gap:.5em;
+    font-size:clamp(5.5px,.62vw,8.5px);
+    text-transform:uppercase; letter-spacing:.12em; color:#555;
+  }
+
+  /* Speakers – right column */
+  .spk-col { top:5.5%; right:3.5%; text-align:right; max-width:clamp(70px,10vw,132px); }
+  .spk-head {
+    font-size:clamp(5.5px,.62vw,8.5px); font-weight:700;
+    text-transform:uppercase; letter-spacing:.15em; color:#0a0a0a;
+    margin-bottom:.6em; padding-bottom:.4em; border-bottom:1px solid rgba(0,0,0,.15);
+  }
+  .spk-name { font-size:clamp(6.5px,.72vw,9.5px); font-weight:700; color:#0a0a0a; line-height:1.2; margin-top:.45em; }
+  .spk-role { font-size:clamp(5px,.56vw,7.5px); color:#555; line-height:1.35; }
+
+  /* QR – bottom right */
+  .qr-block { bottom:5%; right:3.5%; display:flex; flex-direction:column; align-items:flex-end; gap:.3em; }
+  .qr-lbl { font-size:clamp(5px,.56vw,7.5px); text-transform:uppercase; letter-spacing:.15em; color:#555; font-weight:700; }
+  .qr-box { background:#fff; padding:3px; border:1px solid rgba(0,0,0,.12); }
+  .qr-box img { display:block; width:clamp(38px,4.8vw,62px); height:clamp(38px,4.8vw,62px); }
+  .qr-url { font-size:clamp(4.5px,.52vw,7px); color:#333; }
+
+  /* sub-title – small, tracked */
+  .sub-title {
+    bottom:calc(2% + clamp(44px,9vw,124px)); left:4%;
+    font-size:clamp(6px,.66vw,9px);
+    font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:#0a0a0a;
+    border-left:2px solid #0a0a0a; padding-left:.8em; line-height:1.6;
+  }
+
+  /* MAIN TITLE – giant */
+  .main-title {
+    bottom:0; left:0;
+    font-size:clamp(50px,10.5vw,145px);
+    font-weight:900; line-height:.84; letter-spacing:-.03em;
+    color:#0a0a0a; padding:0 0 1.8% 4%;
+    z-index:6 !important; mix-blend-mode:multiply;
+  }
+
+  /* ── Controls ── */
+  .controls {
+    margin-top:14px; display:flex; flex-wrap:wrap;
+    gap:10px; align-items:center; justify-content:center;
+  }
+  .ctrl-btn {
+    background:rgba(255,255,255,.1); color:#fff;
+    border:1px solid rgba(255,255,255,.2); border-radius:6px;
+    padding:6px 14px; cursor:pointer; font-size:12px; transition:.2s;
+  }
+  .ctrl-btn:hover { background:rgba(255,255,255,.22); }
+  label { color:rgba(255,255,255,.7); font-size:12px; display:flex; align-items:center; gap:5px; }
+  input[type=range] { width:80px; }
+  select { background:#222; color:#fff; border:1px solid #444; border-radius:4px; padding:3px 6px; font-size:11px; }
+  .hint { color:rgba(255,255,255,.3); font-size:11px; margin-top:6px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div id="poster">
+  <canvas id="bgCanvas"></canvas>   <!-- gradient dot grid -->
+  <canvas id="lobCanvas"></canvas>  <!-- halftone lobster -->
+
+  <!-- Grid rules -->
+  <div class="vl" style="left:27%"></div>
+  <div class="vl" style="right:16%"></div>
+  <div class="hl" style="top:16%"></div>
+  <div class="hl" style="bottom:16%"></div>
+
+  <!-- Badge -->
+  <div class="ov badge">AI Community · Shenzhen · March 2025</div>
+
+  <!-- Info column -->
+  <div class="ov info-col">
+    <div class="info-block">
+      <div class="ilabel">Date</div>
+      <div class="ival"><strong>3 月 8 日</strong><br>（本周日）<br>14:00 — 17:30</div>
+    </div>
+    <div class="irule"></div>
+    <div class="info-block">
+      <div class="ilabel">Venue</div>
+      <div class="ival"><strong>前海嘉里中心 T2</strong><br>深圳市南山区</div>
+    </div>
+    <div class="irule"></div>
+    <div class="info-block">
+      <div class="ilabel">Format</div>
+      <div class="ival">3 小时沉浸式实战</div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="ov arrow-tag">
+    <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+      <path d="M2 2l14 14M16 5v11H5" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    看得见 · 装得上 · 用得好
+  </div>
+
+  <!-- Speakers -->
+  <div class="ov spk-col">
+    <div class="spk-head">Speakers</div>
+    <div class="spk-name">郭沙 博士</div><div class="spk-role">清华 CS / FIU PhD</div>
+    <div class="spk-name">严 博士</div><div class="spk-role">CMU PhD · AI 芯片 CTO</div>
+    <div class="spk-name">Mai Yang</div><div class="spk-role">Cursor 中文区大使</div>
+    <div class="spk-name">Jia Zou</div><div class="spk-role">Roblox 中国负责人</div>
+    <div class="spk-name">Rex Zheng</div><div class="spk-role">Mizu Financial CEO</div>
+    <div class="spk-name">Opacity</div><div class="spk-role">独立开发大神</div>
+  </div>
+
+  <!-- QR -->
+  <div class="ov qr-block">
+    <div class="qr-lbl">扫码报名</div>
+    <div class="qr-box">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=128x128&data=https://luma.com/whbt1o1h&bgcolor=ffffff&color=0a0a0a&margin=0" alt="QR">
+    </div>
+    <div class="qr-url">luma.com/whbt1o1h</div>
+  </div>
+
+  <!-- Sub + Main title -->
+  <div class="ov sub-title">OpenClaw Meetup &nbsp;·&nbsp; 2025</div>
+  <div class="ov main-title">OpenClaw</div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <label>龙虾点距
+    <input type="range" id="lobStep" min="4" max="20" value="9" oninput="render()">
+    <span id="lobStepV">9</span>px
+  </label>
+  <label>BG 点距
+    <input type="range" id="bgStep" min="6" max="24" value="13" oninput="render()">
+    <span id="bgStepV">13</span>px
+  </label>
+  <label>BG 最小点
+    <input type="range" id="bgMin" min="0" max="2" step=".1" value=".3" oninput="render()">
+    <span id="bgMinV">.3</span>
+  </label>
+  <label>BG 最大点
+    <input type="range" id="bgMax" min="2" max="9" step=".2" value="4.5" oninput="render()">
+    <span id="bgMaxV">4.5</span>
+  </label>
+  <label>渐变方向
+    <select id="bgDir" onchange="render()">
+      <option value="diagonal">斜向</option>
+      <option value="radial">放射</option>
+      <option value="horizontal">横向</option>
+      <option value="vertical">纵向</option>
+    </select>
+  </label>
+  <label>对比度
+    <input type="range" id="contrast" min="1" max="4" step=".05" value="2.0" oninput="render()">
+    <span id="contrastV">2.0</span>×
+  </label>
+</div>
+<div class="hint">← → 调节龙虾点距 &nbsp;|&nbsp; Ctrl+P 导出 PDF</div>
+
+<script>
+const bgCvs  = document.getElementById('bgCanvas');
+const bgCtx  = bgCvs.getContext('2d');
+const lobCvs = document.getElementById('lobCanvas');
+const lobCtx = lobCvs.getContext('2d', { willReadFrequently:true });
+
+let srcImg = null;
+
+/* ── Load source lobster ── */
+function loadSrc() {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload  = () => { srcImg = img; res(); };
+    img.onerror = () => res();          // proceed without image
+    img.src = 'lobster-src.png';
+  });
+}
+
+/* ── Draw gradient dot-grid background ── */
+function drawBg(W, H) {
+  const step   = +document.getElementById('bgStep').value;
+  const minR   = +document.getElementById('bgMin').value;
+  const maxR   = +document.getElementById('bgMax').value;
+  const dir    = document.getElementById('bgDir').value;
+
+  document.getElementById('bgStepV').textContent = step;
+  document.getElementById('bgMinV').textContent  = minR;
+  document.getElementById('bgMaxV').textContent  = maxR;
+
+  bgCvs.width = W; bgCvs.height = H;
+  bgCtx.fillStyle = '#f4f3ee';
+  bgCtx.fillRect(0, 0, W, H);
+  bgCtx.fillStyle = 'rgba(0,0,0,.17)';
+  bgCtx.beginPath();
+
+  const half = step / 2;
+  for (let y = half; y < H; y += step) {
+    for (let x = half; x < W; x += step) {
+      let t;
+      if      (dir==='diagonal')   t = (x/W*.5 + y/H*.5);
+      else if (dir==='radial')     { const dx=Math.abs(x/W-.5)*2, dy=Math.abs(y/H-.5)*2; t=Math.sqrt(dx*dx+dy*dy)/Math.SQRT2; }
+      else if (dir==='horizontal') t = x/W;
+      else                         t = y/H;
+      t = t*t*(3-2*t); // smoothstep
+      const r = minR + (maxR-minR)*t;
+      if (r>.15) { bgCtx.moveTo(x+r,y); bgCtx.arc(x,y,r,0,Math.PI*2); }
+    }
+  }
+  bgCtx.fill();
+}
+
+/* ── Draw halftone lobster ── */
+function drawLobster(W, H) {
+  const step     = +document.getElementById('lobStep').value;
+  const contrast = +document.getElementById('contrast').value;
+  document.getElementById('lobStepV').textContent  = step;
+  document.getElementById('contrastV').textContent = contrast.toFixed(2);
+
+  lobCvs.width = W; lobCvs.height = H;
+
+  if (!srcImg) { drawFallbackLobster(W, H, step); return; }
+
+  /* ── Step 1: render source image to offscreen ── */
+  const off  = new OffscreenCanvas(W, H);
+  const octx = off.getContext('2d');
+
+  // Transparent (will show cream BG through multiply)
+  octx.clearRect(0, 0, W, H);
+
+  // Scale lobster: fill ~90% of height, horizontally centered in right 65% of poster
+  const availW = W * 0.65;
+  const availH = H * 0.95;
+  const scaleF = Math.min(availW / srcImg.width, availH / srcImg.height);
+  const dw = srcImg.width  * scaleF;
+  const dh = srcImg.height * scaleF;
+  // anchor: horizontally centred in [35%..100%], vertically centred
+  const dx = W * 0.35 + (availW - dw) / 2;
+  const dy = (H - dh) / 2;
+  octx.drawImage(srcImg, dx, dy, dw, dh);
+
+  /* ── Step 2: grayscale + contrast ── */
+  const id = octx.getImageData(0, 0, W, H);
+  const d  = id.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const a = d[i+3];
+    if (a === 0) continue;            // transparent → skip (no dot)
+    // Grayscale
+    let g = .299*d[i] + .587*d[i+1] + .114*d[i+2];
+    // Contrast stretch around midpoint 128
+    g = 128 + (g - 128) * contrast;
+    g = Math.max(0, Math.min(255, g));
+    d[i] = d[i+1] = d[i+2] = g;
+    // Keep alpha (for masking)
+  }
+  octx.putImageData(id, 0, 0);
+
+  /* ── Step 3: render halftone dots ── */
+  lobCtx.clearRect(0, 0, W, H);
+
+  const src  = octx.getImageData(0, 0, W, H).data;
+  const half = step / 2;
+
+  lobCtx.fillStyle = '#0a0a0a';
+  lobCtx.beginPath();
+
+  for (let y = half; y < H; y += step) {
+    for (let x = half; x < W; x += step) {
+      const px = Math.min(W-1, Math.round(x));
+      const py = Math.min(H-1, Math.round(y));
+      const i  = (py * W + px) * 4;
+      const alpha = src[i+3];
+      if (alpha < 20) continue;       // no dot in transparent areas
+
+      const lum  = src[i] / 255;     // already grayscale
+      // Dot radius: dark pixels → big dot; light pixels → small / no dot
+      const r = (1 - lum) * half * 0.94;
+      if (r > .35) {
+        lobCtx.moveTo(x+r, y);
+        lobCtx.arc(x, y, r, 0, Math.PI*2);
+      }
+    }
+  }
+  lobCtx.fill();
+}
+
+/* ── Vector fallback (if image fails to load) ── */
+function drawFallbackLobster(W, H, step) {
+  const off  = new OffscreenCanvas(W, H);
+  const octx = off.getContext('2d');
+  octx.clearRect(0, 0, W, H);
+  const cx = W*.62, cy = H*.5, s = H*.0026;
+  octx.save(); octx.translate(cx,cy); octx.scale(s,s);
+  octx.fillStyle='#111';
+  // body
+  octx.beginPath(); octx.ellipse(0,20,42,90,0,0,Math.PI*2); octx.fill();
+  // head
+  octx.beginPath(); octx.ellipse(0,-76,32,36,0,0,Math.PI*2); octx.fill();
+  // claws
+  [[-1],[1]].forEach(([sx])=>{
+    octx.save(); octx.scale(sx,1);
+    octx.beginPath(); octx.ellipse(58,-28,14,52,-0.3,0,Math.PI*2); octx.fill();
+    octx.beginPath(); octx.ellipse(82,-48,30,16,0.3,0,Math.PI*2); octx.fill();
+    octx.restore();
+  });
+  // antennae
+  octx.strokeStyle='#111'; octx.lineWidth=5; octx.lineCap='round';
+  [[-22,-.4],[22,.4]].forEach(([ax,r])=>{
+    octx.save(); octx.rotate(r);
+    octx.beginPath(); octx.moveTo(ax,-100);
+    octx.bezierCurveTo(ax*1.8,-155,ax*3.2,-180,ax*4.2,-205); octx.stroke();
+    octx.restore();
+  });
+  // tail
+  [-50,-25,0,25,50].forEach(a=>{
+    octx.save(); octx.rotate(a*Math.PI/180);
+    octx.beginPath(); octx.ellipse(0,112,12,25,0,0,Math.PI*2); octx.fill();
+    octx.restore();
+  });
+  octx.restore();
+
+  // Halftone the fallback
+  const id = octx.getImageData(0, 0, W, H);
+  const d  = id.data;
+  for (let i=0;i<d.length;i+=4) {
+    const g=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+    d[i]=d[i+1]=d[i+2]=g;
+  }
+  octx.putImageData(id,0,0);
+  const src=octx.getImageData(0,0,W,H).data;
+  const half=step/2;
+  lobCtx.fillStyle='#0a0a0a'; lobCtx.beginPath();
+  for(let y=half;y<H;y+=step){
+    for(let x=half;x<W;x+=step){
+      const px=Math.min(W-1,Math.round(x)), py=Math.min(H-1,Math.round(y));
+      const i=(py*W+px)*4;
+      if(src[i+3]<20) continue;
+      const lum=src[i]/255;
+      const r=(1-lum)*half*.94;
+      if(r>.35){lobCtx.moveTo(x+r,y);lobCtx.arc(x,y,r,0,Math.PI*2);}
+    }
+  }
+  lobCtx.fill();
+}
+
+/* ── Main render ── */
+function render() {
+  const poster = document.getElementById('poster');
+  const W = poster.clientWidth;
+  const H = poster.clientHeight;
+  drawBg(W, H);
+  drawLobster(W, H);
+}
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+  const s = document.getElementById('lobStep');
+  if (e.key==='ArrowRight'||e.key==='=') { s.value=Math.min(20,+s.value+1); render(); }
+  if (e.key==='ArrowLeft' ||e.key==='-') { s.value=Math.max(4, +s.value-1); render(); }
+});
+
+/* ── Init ── */
+(async()=>{
+  await loadSrc();
+  render();
+  let t;
+  window.addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(render,120); });
+})();
+</script>
+</body>
+</html>
