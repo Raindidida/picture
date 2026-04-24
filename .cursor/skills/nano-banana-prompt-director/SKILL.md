@@ -61,18 +61,66 @@
 - B. 参考图生图 / 多图融合 (Image+Text)
 - C. 改图/编辑 (Editing / Inpainting / 风格替换 / 修复 / 上色)
 
+### 新写作范式（优先使用）
+
+把 Nano Banana 提示词从“关键词堆叠”改成“导演式镜头 briefing”。默认遵循下面这套顺序：
+
+1. **先定画面锚点**：先用一句话定义媒介与气质，例如 `Cinematic film still.` / `Luxury beauty campaign image.` / `Candid street photograph.`，让模型先知道这是什么类型的画面。
+2. **再写镜头设计**：先写 `EFFECT TYPE`、`CAMERA POSITION`、`DIRECTION` 这类镜头信息，不只说机位，还要说明这种机位会带来什么视觉结果。
+3. **主体描述按层展开**：优先写脸部与辨识度，再写肤色、骨相、发型、身材比例、姿态，不要一上来就堆风格词。
+4. **动作必须可观察**：动作不要只写“站着”“看镜头”，而要写身体如何倾斜、手放在哪里、重心在哪、视线如何落点。
+5. **服装与配饰分开写**：衣物写版型、开口、材质、磨损、贴合方式；配饰写材质、大小、佩戴位置、层次关系。
+6. **表情写肌肉变化**：不要只写“sexy”“cool”“playful”，而要写鼻梁皱起、嘴角牵动、牙齿露出程度、眉弓 tension、眼睑状态。
+7. **环境服务主体**：背景不要泛泛而谈，写它如何被镜头压缩、虚化、切割或作为色块衬托主体。
+8. **最后再补光线、质感与负向约束**：把光比、反射、颗粒、肤质、材质真实度、不要出现的问题收在结尾。
+
+### 反推出来的细节描述规则
+
+- 多用**可见事实**，少用抽象判断：`defined cheekbones` 比 `beautiful face` 更有效
+- 多写**局部结构**与**相对位置**：`left hand raised beside her face` 比 `hand near face` 更可控
+- 多写**材质触感**：`matte frames`、`ribbed cotton`、`dark silver septum ring`
+- 多写**镜头造成的视觉后果**：不仅写低机位，还写它如何夸张前景、压缩背景、制造权力感
+- 允许使用**自然语言 + 标签块**混合结构；标签是为了可读性和控制力，不是生硬参数表
+- 描述顺序尽量遵循：**镜头 → 主体身份 → 动作姿态 → 服装配饰 → 表情神态 → 环境光影 → 质感收束**
+- 除非用户明确要求，否则不要把所有槽位都写满；只保留真正影响结果的细节
+
+### 推荐字段骨架（高精度人像/时尚/广告/复刻时优先）
+
+```
+<一句总锚点，例如 Cinematic film still.>
+EFFECT TYPE:
+CAMERA POSITION:
+DIRECTION:
+(可选：用括号补一句视觉意图说明)
+SUBJECT:
+ACTION:
+BODY POSITION:
+CLOTHING:
+ACCESSORIES:
+MOVEMENT:
+EXPRESSION:
+ENVIRONMENT:
+LIGHTING:
+TEXTURE / IMAGE FINISH:
+NEGATIVE GUIDANCE:
+```
+
+> 说明：这不是死板模板。普通需求可写成一段自然英文；高精度需求可用上述字段块，让模型更稳定地理解镜头、造型和微表情。
+
 ### 输出格式
 
 ```
-【中文简介】
-（一段详细的中文描述，涵盖主体、环境、材质纹理、光线、情绪、镜头语言）
+【中文拆解】
+（先用中文解释画面的核心意图：这张图的镜头关系、主体气质、动作姿态、服装材质、表情重点、环境作用分别是什么）
 
 【最终提示词】
-（可直接复制给 Nano Banana 的中文自然语言提示词，完整句子，不用逗号标签堆砌。
- 若有参考图：写明每张参考图的作用（姿势/风格/背景/人物身份等）。
- 若需角色一致性：写"保持 Image 1 的面部特征完全一致"等 Identity Locking 指令。
- 包含负向约束（如用户有需求）。
- 包含图片规格说明。）
+（可直接复制给 Nano Banana 的英文提示词。
+ 默认使用自然、完整、连贯的英文句子。
+ 若任务是时尚摄影、商业广告、电影剧照、角色复刻、精细人像，则优先使用“总锚点 + 标签块”的混合写法，让提示词更自然也更细。
+ 若有参考图：写明每张参考图的作用（身份/脸/姿势/服装/背景/光线/色调）。
+ 若需角色一致性：写明 `Keep the facial identity from Image 1 exactly consistent.` 之类的 identity locking 指令。
+ 若有负向需求：用自然语言写成清晰排除项，而不是机械堆 `no ... no ...`。
+ 末尾可附 `Config suggestions: aspect_ratio=<...>, image_size=<1K/2K/4K>`。）
 ```
 
 ---
@@ -106,7 +154,7 @@ Config suggestions: aspect_ratio=<...>, image_size=<1K/2K/4K>
 ### 复刻核心思路
 
 1. **先拆解**参考图 A：锁定不变项 A / 结构骨架 B / 风格修饰 C
-2. **输出母 Prompt**：结构清晰，明确权重倾向与关键结构/光影/风格
+2. **输出母 Prompt**：优先按“总锚点 + 镜头 + 主体 + 姿态 + 造型 + 表情 + 光影 + 收束”的顺序组织，而不是无序堆词
 3. **映射到三平台**：MJ / Nano Banana / 即梦
 
 ### 拆解模板（内部遵循）
@@ -124,13 +172,13 @@ B 结构骨架：构图=<...>；镜头=<...>；光影=<...>
 C 风格修饰：<...>
 
 【复刻英文 Prompt（母 Prompt）】
-（一段结构清晰的提示词，可直接用于复刻，明确权重倾向与关键结构/光影/风格）
+（一段结构清晰的提示词，可直接用于复刻，优先使用“自然句 + 标签块”的导演式写法，明确不变项、镜头关系、主体细节、动作姿态、服装配饰、微表情、光影与色彩分级）
 
 【MJ V7】
 （基于母 Prompt，末尾接参数）
 
 【Nano Banana / Nano Banana Pro】
-Prompt: （叙述式英文提示词，明确要求 match the reference photo's composition, camera angle, focal length feel, lighting ratio, and color grading）
+Prompt: （叙述式英文提示词；高精度复刻时允许使用 `Cinematic film still.` + `EFFECT TYPE / CAMERA POSITION / SUBJECT / ACTION / EXPRESSION ...` 这种自然标签块，明确要求 `match the reference photo's composition, camera angle, focal length feel, lighting ratio, and color grading`）
 Config suggestions: aspect_ratio=<...>, image_size=<1K/2K/4K>
 
 【即梦图片 4.5】
@@ -241,6 +289,7 @@ Config suggestions: aspect_ratio=<...>, image_size=<1K/2K/4K>
 ### Nano Banana / Nano Banana Pro
 
 - 提示词语言：优先英文自然语言完整句子，像和创意总监沟通；禁用"关键词大杂烩"
+- 高精度摄影、人像、广告、复刻：优先使用“总锚点 + 标签块 + 连贯自然句”的混合写法，比纯关键词或纯散文都更稳
 - 适合：文本渲染 / 信息图 / 多轮编辑 / 合成 / 角色一致性
 - 贴纸/图标：明确要求 `transparent background`
 - `image_size` 只能是 `1K` / `2K` / `4K`（必须大写 K）
@@ -262,6 +311,11 @@ Config suggestions: aspect_ratio=<...>, image_size=<1K/2K/4K>
 ## 全局写作原则
 
 - 先描述"想要看到什么"，避免只堆标签；必要时再做负向排除
+- 写细节时优先采用**分层展开**：镜头关系、主体骨相、动作姿态、服装材质、配饰层级、微表情、环境作用，不要把所有信息揉成一团
+- 需要“自然”时，不等于模糊；要把自然语言写成**可观察、可执行、可复现**的描述
+- 少写空泛美学词，多写会真正改变出图结果的结构信息：机位高度、身体倾角、手指位置、衣料纹理、配饰材质、表情肌肉变化
+- 高精度提示词可以写“标签块”，但每个标签后面仍然要像人在说话，而不是参数清单
+- 镜头描述除了“是什么”，最好补一句“会造成什么视觉效果”，提高模型对构图意图的理解
 - 遇到"编辑/修改"需求：优先写"具体改什么"，而不是"变好看"
 - 遇到文字：严格用引号包裹（MJ 用英文双引号，即梦用中文引号）
 - 不要编造不存在的参数/功能；不确定时给"建议值"而非硬写死
