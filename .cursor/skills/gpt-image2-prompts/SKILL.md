@@ -39,6 +39,24 @@ updated: "2026-04-25"
 | 技术参数 | 光影、材质、构图 | 柔光打光 / 浅景深 / 电影级打光 |
 | 输出规格 | 比例和分辨率 | 9:16 / 3:4 / 1:1 / 4K / 8K |
 
+
+### 电影镜头结尾规则（必须追加）
+
+生成任何偏摄影、电影剧照、广告摄影、人像写真、产品摄影、场景氛围图、参考图复刻的 GPT-Image 提示词时，必须在最终提示词结尾追加一段英文镜头与胶片描述；这段不是固定模板，而是根据主体、景别、空间、情绪和实际拍摄需求选择合理配置。
+
+格式：`[shot scale / visual intent] captured with [camera body], [cinema/photo lens focal length + aperture], [film stock or digital color pipeline]`。
+
+选择规则：
+- 人像特写 / 美妆 / 情绪脸部：优先 50mm、65mm、75mm、85mm，浅景深，肤色自然；可用 ARRI Alexa 35 / Panavision Primo / Cooke S4 / Zeiss Supreme Prime / Kodak Portra 160NC。
+- 环境人像 / 街拍 / 纪实：优先 28mm、35mm、40mm，保留环境关系；可用 Leica M6 / Contax G2 / ARRI Alexa Mini LF / Kodak Portra 400 / Cinestill 800T。
+- 室内狭窄空间 / 低机位 / 动态叙事：优先 21mm、24mm、28mm，强调透视和现场感；可用 Contax 645 / Zeiss Distagon / Angenieux Optimo / Kodak Vision3 500T。
+- 产品 / 静物 / 奢侈品细节：优先 90mm、100mm macro、120mm macro，微距锐度和材质层次；可用 Hasselblad X2D / Phase One XF / Zeiss Makro-Planar / Fujifilm Pro 400H。
+- 大场景 / 建筑 / 科幻世界观：优先 18mm、24mm、32mm anamorphic，宽银幕和空间纵深；可用 ARRI Alexa 65 / Panavision C Series anamorphic / Kodak Vision3 250D。
+
+示例：`Medium format film aesthetic captured with Contax 645 camera, Carl Zeiss Planar 80mm f/2 lens, Kodak Portra 160NC film emulation.`
+
+注意：镜头描述必须服务画面，不要每次照抄示例；焦段、镜头品牌、胶片/数字色彩流程要与画面风格匹配，并放在提示词最后一句。
+
 ### 5条黄金原则
 1. **具体 > 模糊**：描述越具体，输出越精准
 2. **中文直接说**：不需要翻译成英文，中文效果一样好
