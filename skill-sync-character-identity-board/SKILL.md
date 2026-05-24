@@ -1,102 +1,134 @@
 ---
 name: character-identity-board-prompt
-description: Generate concise GPT Image 2 CHARACTER IDENTITY BOARD prompt blocks for fully original, copyright-safe character designs. Use when the user asks for a character card prompt, character identity board prompt, character design board, OC character sheet prompt, GPT Image prompt for a character, or wants short structured character-board prompts from a seed or reference image.
+description: Generate GPT Image 2 prompts in a fixed long CHARACTER IDENTITY BOARD template where only four variables are filled: CHARACTER SEED, AGE / BODY TYPE, VISUAL MEDIUM, and STYLE. Use when the user asks for a character card prompt, character identity board prompt, character design board, OC character sheet prompt, GPT Image prompt for a character, or wants a reference image or seed idea converted into a 16:9 artistic character identity board prompt.
 ---
 
 # Character Identity Board Prompt
 
 ## Overview
 
-Generate concise CHARACTER IDENTITY BOARD prompt blocks using four required fields only. Keep the wording compact, specific, and ready to paste into GPT Image 2.
+Generate a ready-to-paste GPT Image 2 prompt using the fixed long CHARACTER IDENTITY BOARD template. Only fill the four variable fields: `[CHARACTER SEED]`, `[AGE / BODY TYPE]`, `[VISUAL MEDIUM]`, and `[STYLE]`. Keep every rule section after the variables unchanged.
 
-## Required Output Structure
+## Workflow
 
-Always output this exact field structure:
+1. Extract or infer only these four fields from the user request:
+   - `CHARACTER SEED`
+   - `AGE / BODY TYPE`
+   - `VISUAL MEDIUM`
+   - `STYLE`
+2. If the user provides extra details, fold them into one of the four fields instead of adding `[OTHER DETAILS - OPTIONAL]`.
+3. If the user provides a reference image, use it only for broad mood, material, lighting, pose energy, styling cues, or palette. Do not copy the person, exact face, exact outfit, exact composition, logo, or any identifiable subject.
+4. If a required field is missing, make a tasteful assumption and fill it directly into the field.
+5. Return only one complete prompt in the fixed template unless the user asks for explanation.
+
+## Required Output Template
+
+Always use this exact structure. Fill only the four bracketed variable sections at the top. Do not include an `[OTHER DETAILS - OPTIONAL]` section in the generated output.
 
 ```text
+Create a fully original, copyright-safe character and present them as an artistic CHARACTER IDENTITY BOARD.
+
 [CHARACTER SEED]:
-[One concise paragraph describing the original character concept, role, mood, and identity hook.]
+[Fill this with the core idea, identity hook, mood, outfit/body hints, props, colors, themes, personality hints, and any user-provided extra details.]
 
 [AGE / BODY TYPE]:
-[One concise paragraph describing age impression, body type, posture, movement, physical presence, or creature anatomy.]
+[Fill this with age impression, body type, posture, physical presence, or creature anatomy.]
 
 [VISUAL MEDIUM]:
-[One concise line describing the exact rendering medium and board presentation quality.]
+[Fill this with the exact rendering medium.]
 
 [STYLE]:
-[One concise line describing the aesthetic direction, fashion/culture/mood references, palette, and energy.]
+[Fill this with the aesthetic direction.]
+
+Invent everything else:
+character name, alias or title, role, personality traits, emotional tone, visual theme, outfit design or body design, color palette, signature prop or signature biological feature, recognizable silhouette, pose language, small identity notes.
+
+Originality rules:
+The character must not resemble any existing anime, manga, game, movie, comic, celebrity, athlete, mascot, franchise character or known copyrighted creature.
+Do not copy recognizable IP elements, costumes, hairstyles, uniforms, weapons, logos, symbols, color combinations, silhouettes, powers or signature visual traits.
+Avoid fan-art aesthetics.
+Create a fresh visual identity from scratch.
+
+Character authenticity rules:
+Create the character with a strong sense of individuality and non-generic design.
+Avoid overly polished, overly idealized or repetitive visual features that make the character feel like a default AI-generated face, stock design, cloned archetype or generic creature.
+
+If the character is human or humanoid:
+Use distinctive facial structure, subtle asymmetry, natural variation, small imperfections and believable proportions.
+The character should feel specific, grounded and recognizably individual.
+If the character is attractive, keep the appeal natural, tasteful and appropriate to the chosen visual medium.
+
+If the character is stylized:
+Preserve uniqueness through original shape language, expressive proportions, distinctive features, posture and clear personality cues.
+Avoid default genre clichés and repeated beauty standards.
+
+If the character is non-human:
+Preserve uniqueness through original anatomy, believable biological structure, distinctive proportions, functional features, surface texture and clear personality cues.
+Do not make it feel like a generic mascot, pet monster or stock fantasy creature.
+
+Medium and style control:
+[VISUAL MEDIUM] controls the rendering language.
+[STYLE] controls the aesthetic direction.
+The character identity board format is only the presentation format.
+The presentation must adapt to [VISUAL MEDIUM] and [STYLE], not override them.
+Use visual traits that belong naturally to the selected medium.
+
+Create an artistic 16:9 CHARACTER IDENTITY BOARD.
+
+The board should feel like a curated visual identity presentation, not a generic turnaround sheet.
+
+Board content:
+large full-body main character view, neutral full-body view, back view, profile view, secondary attitude pose, 4 to 6 face or expression studies, outfit detail close-ups or anatomy detail close-ups, key prop close-up or signature feature close-up, small silhouette or shape study, color palette strip, short readable identity notes.
+
+Layout:
+asymmetrical, elegant, visually memorable, large empty space, clean separation between all views, no overlapping bodies, no cropped faces, no hidden limbs, no clutter.
+
+Text on the board may include:
+character name, alias, role, personality traits, core theme, signature prop or feature, color notes.
+
+Background:
+pure white or soft off-white, minimal clean graphic design, no environment, no logo, no watermark.
+
+Prioritize:
+accurate visual medium, strong unique identity, readable outfit design or anatomy design, clear personality, original character design, natural or stylized individuality as appropriate, believable uniqueness, non-repetitive character design, artistic identity-board presentation.
 ```
-
-Do not include the long rules section, board-content section, background section, negative prompt, or explanatory notes unless the user explicitly asks for the full template.
-
-## Writing Rules
-
-- Keep each field short, usually one sentence or one compact paragraph.
-- Preserve the bracket labels exactly: `[CHARACTER SEED]:`, `[AGE / BODY TYPE]:`, `[VISUAL MEDIUM]:`, `[STYLE]:`.
-- Do not add `[OTHER DETAILS - OPTIONAL]` in the default output.
-- Do not add "Create a fully original..." in the default output unless the user asks for the full prompt template.
-- If generating multiple options, separate each prompt block with `--`.
-- Make every character fully original and copyright-safe.
-- Avoid resemblance to existing anime, manga, game, movie, comic, celebrity, athlete, mascot, franchise character, or known copyrighted creature.
-- Do not copy recognizable IP elements, costumes, hairstyles, uniforms, weapons, logos, symbols, color combinations, silhouettes, powers, or signature visual traits.
-- Avoid fan-art aesthetics and franchise-coded shorthand.
-
-## Reference Image Handling
-
-If the user provides a reference image, use it only for broad qualities:
-
-- mood
-- posture or pose energy
-- fabric/material feeling
-- palette
-- lighting direction
-- fashion category
-- general editorial attitude
-
-Do not copy the person, exact face, exact outfit, exact composition, logos, or any identifiable subject.
 
 ## Field Guidance
 
-`[CHARACTER SEED]` should include the core idea and a fresh identity hook, for example:
+Use concise but specific prose inside each filled field. Do not leave placeholder text in the final output.
 
-```text
-A former subway maintenance worker who now designs custom nightwear jackets for underground street performers.
-```
+For `VISUAL MEDIUM`, use exact rendering language, for example:
 
-`[AGE / BODY TYPE]` should describe physical presence, for example:
+- realistic cinematic character design
+- fashion editorial photography look
+- semi-realistic painterly realism
+- modern 3D animation character design
+- 2D anime character design
+- graphic novel illustration
+- watercolor storybook illustration
+- flat vector poster illustration
+- oil-painting-inspired character art
+- ink and wash illustration
+- semi-realistic creature concept art
 
-```text
-Adult, late 20s to mid-30s, lean build, average height, slightly tired posture, practical hands, grounded everyday presence.
-```
+For `STYLE`, use an aesthetic direction, for example:
 
-`[VISUAL MEDIUM]` should control rendering language, for example:
+- urban street fashion
+- luxury sports editorial
+- dark cinematic noir
+- soft melancholic artbook mood
+- post-apocalyptic survival wear
+- retro-future fashion
+- minimalist high-fashion
+- cozy slice-of-life
+- gritty underground music-video energy
+- elegant fantasy costume design
+- poetic coastal fantasy
+- bioluminescent natural history mood
 
-```text
-Realistic cinematic character design, natural human features, believable facial structure, realistic fabric detail, clean studio lighting, premium identity-board presentation.
-```
+## Important Constraints
 
-`[STYLE]` should control aesthetic direction, for example:
-
-```text
-Urban street fashion, underground music-scene energy, layered contemporary clothing, handmade jacket culture, muted city-night palette, quiet charisma.
-```
-
-## Medium Examples
-
-- Realistic cinematic character design, natural human features, believable facial structure, realistic fabric detail, clean studio lighting, premium identity-board presentation.
-- 1980s hand-painted cel anime character design, clean ink linework, flat painted colors, classic cel shading, retro animation aesthetics, elegant identity-board presentation.
-- Stylized 3D animation character design, polished family-animation look, clean sculpted forms, soft material definition, expressive facial design, appealing proportions, premium identity-board presentation.
-- Stylized semi-realistic character concept art, painterly 3D-inspired rendering, expressive facial design, refined material detail, cinematic lighting, premium identity-board presentation.
-- Realistic luxury fashion magazine photography, high-end editorial portrait photography, believable skin texture, professional studio lighting, premium identity-board presentation.
-
-## Style Examples
-
-- Urban street fashion, underground music-scene energy, layered contemporary clothing, handmade jacket culture, muted city-night palette, quiet charisma.
-- Retro city-pop sci-fi, neon nightlife mood, analog technology, stylish youth-drama energy, nostalgic Japanese animation atmosphere.
-- Heartwarming animated adventure, whimsical everyday fantasy, playful invention theme, cozy emotional storytelling, colorful character appeal, polished family-film energy.
-- Industrial fantasy, undercity grime, art nouveau meets steampunk, dramatic painterly realism, moody cinematic atmosphere, richly designed silhouette, emotional visual storytelling.
-- Hong Kong luxury menswear editorial, matte porcelain beauty campaign, refined playboy elegance, warm champagne minimalism, understated rich heir styling.
-
-## Full Template Exception
-
-Only use the longer full CHARACTER IDENTITY BOARD template when the user explicitly asks for "完整模板", "full template", "long version", "include originality rules", or similar wording.
+- Do not add `[OTHER DETAILS - OPTIONAL]` in normal generated prompts.
+- Do not rewrite or shorten the fixed rule sections after `[STYLE]`.
+- Do not create a separate negative prompt unless the user asks.
+- If the user asks for shorter output, make the four filled fields shorter while keeping the fixed long sections intact.
