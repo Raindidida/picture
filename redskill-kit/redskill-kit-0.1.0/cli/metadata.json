@@ -1,0 +1,5 @@
+{
+  "skills_primary_download_url_template": "https://edith.xiaohongshu.com/api/sns/v1/creator/red_skill/get_skill_bundle",
+  "skills_search_url": "https://edith.xiaohongshu.com/api/sns/v1/creator/red_skill/search_published_skills",
+  "self_update_manifest_url": "https://edith.xiaohongshu.com/api/sns/v1/creator/red_skill/get_cli_manifest"
+}
