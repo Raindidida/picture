@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flywheel Assistant Store Screens</title>
+  <style>
+    :root {
+      --blue: #4c86f7;
+      --blue-2: #78a8ff;
+      --ink: #111827;
+      --muted: #687083;
+      --soft: #f5f7fb;
+      --line: #e8ebf1;
+      --green: #16c784;
+      --red: #ff4d61;
+      --amber: #ffb020;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #f2f4f8;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px; }
+    .stack { display: grid; gap: 32px; }
+    .shot {
+      position: relative;
+      width: 1600px;
+      height: 1000px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(76, 134, 247, .08), transparent 26%),
+        linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+      border: 1px solid #edf0f5;
+      isolation: isolate;
+    }
+    .shot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(76, 134, 247, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(76, 134, 247, .035) 1px, transparent 1px);
+      background-size: 96px 96px;
+      mask-image: linear-gradient(180deg, transparent, #000 16%, #000 78%, transparent);
+      pointer-events: none;
+      z-index: -1;
+    }
+    .frame {
+      position: absolute;
+      inset: 84px 100px;
+      display: grid;
+      grid-template-columns: 1fr 690px;
+      align-items: center;
+      gap: 86px;
+    }
+    .frame.center {
+      grid-template-columns: 1fr;
+      place-items: center;
+      text-align: center;
+    }
+    .copy { max-width: 650px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid #dbe7ff;
+      background: #f3f7ff;
+      color: #3d73dd;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin-bottom: 28px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(22, 199, 132, .12);
+    }
+    h1 {
+      margin: 0;
+      font-size: 66px;
+      line-height: 1.02;
+      letter-spacing: 0;
+      font-weight: 760;
+      color: #171a22;
+    }
+    .sub {
+      margin: 28px 0 0;
+      font-size: 29px;
+      line-height: 1.34;
+      color: #596273;
+      letter-spacing: 0;
+    }
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      margin-bottom: 30px;
+    }
+    .logo {
+      width: 108px;
+      height: 108px;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 32px rgba(76, 134, 247, .22));
+    }
+    .brand-name {
+      font-size: 34px;
+      font-weight: 760;
+      color: #15171e;
+      letter-spacing: 0;
+    }
+    .hero-title {
+      max-width: 1180px;
+      font-size: 70px;
+    }
+    .hero-sub {
+      max-width: 1020px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-panel {
+      margin-top: 64px;
+      width: 1180px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .mini-module {
+      min-height: 170px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, .88);
+      box-shadow: 0 26px 70px rgba(27, 40, 76, .08);
+      padding: 28px;
+      text-align: left;
+    }
+    .mini-top { display: flex; justify-content: space-between; align-items: center; color: #7a8496; font-size: 18px; }
+    .mini-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mini-role img {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      box-shadow: 0 10px 24px rgba(20, 207, 105, .18);
+    }
+    .mini-title { margin-top: 24px; font-size: 27px; font-weight: 760; }
+    .mini-line {
+      height: 10px;
+      border-radius: 999px;
+      background: #edf3ff;
+      margin-top: 18px;
+      overflow: hidden;
+    }
+    .mini-line span { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-2)); border-radius: inherit; }
+
+    .mock {
+      position: relative;
+      border: 1px solid #e7ebf2;
+      border-radius: 34px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 34px 90px rgba(31, 44, 78, .12);
+      overflow: hidden;
+    }
+    .mock-header {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+    .traffic { display: flex; gap: 8px; }
+    .traffic i { width: 12px; height: 12px; border-radius: 999px; display: block; }
+    .traffic i:nth-child(1) { background: #ff5f57; }
+    .traffic i:nth-child(2) { background: #ffbd2e; }
+    .traffic i:nth-child(3) { background: #28c840; }
+    .url {
+      flex: 1;
+      height: 30px;
+      border-radius: 999px;
+      background: #f3f5f9;
+      color: #8a93a3;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 12px;
+    }
+    .popup {
+      width: 600px;
+      margin: 42px auto;
+      border: 1px solid #e8ebf1;
+      border-radius: 30px;
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(31, 44, 78, .1);
+      overflow: hidden;
+    }
+    .popup-top {
+      min-height: 250px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 34px;
+    }
+    .popup-logo { width: 90px; height: 90px; object-fit: contain; margin-bottom: 18px; }
+    .popup-title { font-size: 26px; font-weight: 760; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 30px;
+      padding: 0 13px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .pill.green { color: #069667; background: #d8ffed; }
+    .pill.blue { color: #376fdf; background: #e8f0ff; }
+    .pill.red { color: #e72e45; background: #ffe8ec; }
+    .rows { display: grid; gap: 12px; padding: 0 16px 18px; }
+    .row {
+      min-height: 86px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px;
+      background: #fff;
+    }
+    .x-logo {
+      width: 44px;
+      height: 44px;
+      color: #050505;
+      font-size: 45px;
+      line-height: 40px;
+      font-weight: 500;
+      font-family: Arial, sans-serif;
+    }
+    .reddit {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      background: #ff4500;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 24px;
+    }
+    .row-copy { flex: 1; min-width: 0; }
+    .row-title { font-size: 20px; font-weight: 760; }
+    .row-sub { color: #747b88; margin-top: 4px; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .button {
+      height: 42px;
+      border-radius: 12px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 720;
+      color: #fff;
+      background: #171717;
+    }
+    .button.green { background: #17bf83; }
+    .button.red { background: #ef233c; }
+    .browser-body { min-height: 620px; padding: 32px; background: #fbfcff; }
+    .dashboard-grid { display: grid; grid-template-columns: 220px 1fr; gap: 22px; height: 558px; }
+    .sidebar {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      padding: 22px;
+    }
+    .side-item { height: 42px; display: flex; align-items: center; gap: 11px; color: #626b7c; font-size: 15px; }
+    .side-item.active { color: #286eea; font-weight: 760; }
+    .icon-dot { width: 24px; height: 24px; border-radius: 9px; background: #eaf1ff; display: grid; place-items: center; color: var(--blue); font-size: 13px; }
+    .main-panel { display: grid; gap: 18px; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .dash-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #fff;
+      padding: 18px;
+      min-height: 126px;
+    }
+    .dash-label { color: #7d8798; font-size: 14px; }
+    .dash-value { font-size: 32px; font-weight: 780; margin-top: 12px; }
+    .chart {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: #fff;
+      padding: 24px;
+      min-height: 285px;
+      display: flex;
+      align-items: end;
+      gap: 18px;
+    }
+    .bar { flex: 1; border-radius: 14px 14px 6px 6px; background: linear-gradient(180deg, #5f98ff, #c8dcff); }
+    .feed { border: 1px solid var(--line); border-radius: 26px; background: #fff; padding: 22px; }
+    .post-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 20px 54px rgba(31, 44, 78, .08);
+    }
+    .post-header { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 42px; height: 42px; border-radius: 999px; background: linear-gradient(135deg, var(--blue), #b7d0ff); }
+    .post-lines { display: grid; gap: 10px; margin-top: 18px; }
+    .line { height: 10px; border-radius: 999px; background: #edf1f7; }
+    .line.short { width: 62%; }
+    .schedule-strip {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .schedule-item {
+      border-radius: 18px;
+      background: #f4f7ff;
+      border: 1px solid #e0e9ff;
+      padding: 16px;
+      font-size: 14px;
+      color: #5f6a7d;
+    }
+    .flow {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .flow-node {
+      min-width: 166px;
+      min-height: 86px;
+      border-radius: 22px;
+      border: 1px solid #e0e8f8;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-weight: 760;
+      color: #2f3b52;
+      box-shadow: 0 14px 38px rgba(31, 44, 78, .08);
+      padding: 14px 18px;
+    }
+    .flow-node.primary {
+      min-width: 214px;
+      justify-content: flex-start;
+      border-color: #d6e7ff;
+      box-shadow: 0 20px 48px rgba(76, 134, 247, .12);
+    }
+    .flow-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #edf4ff;
+      color: var(--blue);
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+    .flow-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .flow-title {
+      font-size: 17px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .flow-action {
+      margin-top: 7px;
+      font-size: 13px;
+      color: #7b8595;
+      font-weight: 760;
+    }
+    .arrow { color: var(--blue); font-size: 30px; }
+    .privacy-list { display: grid; gap: 14px; padding: 24px; }
+    .privacy-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-height: 72px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 0 20px;
+      font-size: 19px;
+      font-weight: 720;
+    }
+    .check {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #e4fff2;
+      color: #07a970;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+    .shield {
+      width: 250px;
+      height: 250px;
+      border-radius: 52px;
+      background: linear-gradient(145deg, #f5f8ff, #ffffff);
+      border: 1px solid #e4ebfa;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 28px;
+      box-shadow: inset 0 1px 0 #fff, 0 30px 80px rgba(76, 134, 247, .12);
+    }
+    .shield img { width: 112px; height: 112px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <main class="stack">
+    <section class="shot" id="shot-1" data-file="01-main-selling-point">
+      <div class="frame center">
+        <div>
+          <div class="brand-lockup">
+            <img class="logo" src="flywheel-logo.png" alt="">
+            <div class="brand-name">Flywheel Assistant</div>
+          </div>
+          <h1 class="hero-title">One extension. Platforms APIs can't reach.</h1>
+          <p class="sub hero-sub">Connect X and Xiaohongshu to your AI marketing team — no official API needed.</p>
+          <div class="hero-panel">
+            <div class="mini-module">
+              <div class="mini-top"><span>X</span><span class="pill green"><span class="dot"></span>Verified</span></div>
+              <div class="mini-title">Live account access</div>
+              <div class="mini-line"><span style="width:76%"></span></div>
+            </div>
+            <div class="mini-module">
+              <div class="mini-top"><span class="mini-role"><img src="content-specialist-icon.png" alt="">Content Specialist</span><span class="pill blue">Ready</span></div>
+              <div class="mini-title">Campaign sync</div>
+              <div class="mini-line"><span style="width:88%"></span></div>
+            </div>
+            <div class="mini-module">
+              <div class="mini-top"><span>Xiaohongshu</span><span class="pill green"><span class="dot"></span>Connected</span></div>
+              <div class="mini-title">No API required</div>
+              <div class="mini-line"><span style="width:66%"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot" id="shot-2" data-file="02-connection-status">
+      <div class="frame">
+        <div class="copy">
+          <div class="eyebrow"><span class="dot"></span>Connection status</div>
+          <h1>Install once. Stay connected.</h1>
+          <p class="sub">Log in to X or Xiaohongshu as usual — Flywheel detects it automatically and keeps the session alive.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-header"><div class="traffic"><i></i><i></i><i></i></div><div class="url">chrome-extension://flywheel-assistant</div></div>
+          <div class="popup">
+            <div class="popup-top">
+              <img class="popup-logo" src="flywheel-logo.png" alt="">
+              <div class="popup-title">Flywheel Assistant</div>
+              <div style="margin-top:14px" class="pill green"><span class="dot"></span>Connected</div>
+            </div>
+            <div class="rows">
+              <div class="row">
+                <div class="x-logo">𝕏</div>
+                <div class="row-copy"><div class="row-title">X (Twitter)</div><div class="row-sub">Rain夏滴滴</div></div>
+                <div class="pill green"><span class="dot"></span>Verified</div>
+              </div>
+              <div class="row">
+                <div class="x-logo">𝕏</div>
+                <div class="row-copy"><div class="row-title">X (Twitter)</div><div class="row-sub">Launch products and engage with makers</div></div>
+                <div class="button">↔ Connect</div>
+              </div>
+              <div class="row">
+                <div class="reddit">r</div>
+                <div class="row-copy"><div class="row-title">Reddit</div><div class="row-sub" style="color:#ef233c">Token expired</div></div>
+                <div class="button red">↔ Reconnect</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot" id="shot-3" data-file="03-auto-publishing">
+      <div class="frame">
+        <div class="copy">
+          <div class="eyebrow">Auto publishing</div>
+          <h1>Your AI team posts for you.</h1>
+          <p class="sub">Content written by your AI CMO goes live on your accounts — drafted, scheduled, published.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-header"><div class="traffic"><i></i><i></i><i></i></div><div class="url">app.useflywheel.ai/campaigns</div></div>
+          <div class="browser-body">
+            <div class="flow">
+              <div class="flow-node primary">
+                <span class="flow-icon"><img src="content-specialist-icon.png" alt=""></span>
+                <span><span class="flow-title">Content Specialist</span><div class="flow-action">writes</div></span>
+              </div>
+              <div class="arrow">→</div>
+              <div class="flow-node">
+                <span class="flow-icon"><img src="flywheel-logo.png" alt=""></span>
+                <span><span class="flow-title">Flywheel</span><div class="flow-action">syncs</div></span>
+              </div>
+              <div class="arrow">→</div>
+              <div class="flow-node">
+                <span class="flow-icon">↗</span>
+                <span><span class="flow-title">X / 小红书</span><div class="flow-action">publishes</div></span>
+              </div>
+            </div>
+            <div class="post-card">
+              <div class="post-header">
+                <div class="avatar"></div>
+                <div><div class="row-title">Product launch thread</div><div class="row-sub">Scheduled for 9:30 AM · X and Xiaohongshu</div></div>
+                <div style="margin-left:auto" class="pill blue">Drafted</div>
+              </div>
+              <div class="post-lines">
+                <div class="line"></div><div class="line"></div><div class="line short"></div>
+              </div>
+              <div class="schedule-strip">
+                <div class="schedule-item"><strong>09:30</strong><br>Publish thread</div>
+                <div class="schedule-item"><strong>10:15</strong><br>Cross-post note</div>
+                <div class="schedule-item"><strong>14:00</strong><br>Reply boost</div>
+              </div>
+              <div style="margin-top:22px;display:flex;gap:10px">
+                <div class="button green">Published</div>
+                <div class="pill green"><span class="dot"></span>Session active</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot" id="shot-4" data-file="04-data-recovery">
+      <div class="frame">
+        <div class="copy">
+          <div class="eyebrow">Performance feedback</div>
+          <h1>Real numbers, not guesses.</h1>
+          <p class="sub">Views, likes, and replies flow back into your reports automatically.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-header"><div class="traffic"><i></i><i></i><i></i></div><div class="url">app.useflywheel.ai/reports</div></div>
+          <div class="browser-body">
+            <div class="dashboard-grid">
+              <div class="sidebar">
+                <div class="side-item active"><span class="icon-dot">◎</span> Reports</div>
+                <div class="side-item"><span class="icon-dot">✦</span> Campaigns</div>
+                <div class="side-item"><span class="icon-dot">↗</span> Posts</div>
+                <div class="side-item"><span class="icon-dot">#</span> Channels</div>
+              </div>
+              <div class="main-panel">
+                <div class="cards">
+                  <div class="dash-card"><div class="dash-label">Views</div><div class="dash-value">48.2K</div><div class="pill green" style="margin-top:10px">+24%</div></div>
+                  <div class="dash-card"><div class="dash-label">Likes</div><div class="dash-value">3,418</div><div class="pill green" style="margin-top:10px">+18%</div></div>
+                  <div class="dash-card"><div class="dash-label">Replies</div><div class="dash-value">612</div><div class="pill blue" style="margin-top:10px">Synced</div></div>
+                </div>
+                <div class="chart">
+                  <div class="bar" style="height:38%"></div>
+                  <div class="bar" style="height:54%"></div>
+                  <div class="bar" style="height:82%"></div>
+                  <div class="bar" style="height:46%"></div>
+                  <div class="bar" style="height:70%"></div>
+                  <div class="bar" style="height:58%"></div>
+                </div>
+                <div class="feed">
+                  <div class="row-title">Latest sync</div>
+                  <div style="margin-top:14px;display:grid;gap:10px">
+                    <div class="line"></div><div class="line" style="width:84%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot" id="shot-5" data-file="05-privacy-promise">
+      <div class="frame">
+        <div class="copy">
+          <div class="eyebrow">Privacy promise</div>
+          <h1>Only active where you allow.</h1>
+          <p class="sub">No passwords. No browsing history. No ads. Zero tracking — works only on X and Xiaohongshu.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-header"><div class="traffic"><i></i><i></i><i></i></div><div class="url">Flywheel Assistant permissions</div></div>
+          <div class="browser-body">
+            <div class="shield"><img src="flywheel-logo.png" alt=""></div>
+            <div class="privacy-list">
+              <div class="privacy-item"><span class="check">✓</span> No passwords stored</div>
+              <div class="privacy-item"><span class="check">✓</span> No browsing history collected</div>
+              <div class="privacy-item"><span class="check">✓</span> No ads or third-party trackers</div>
+              <div class="privacy-item"><span class="check">✓</span> Runs only on X and Xiaohongshu</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
