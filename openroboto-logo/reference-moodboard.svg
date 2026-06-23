@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <rect width="1600" height="1000" fill="#f6f6f3"/>
+  <text x="80" y="95" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#111">OpenRoboto logo reference board</text>
+  <text x="80" y="138" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#555">From Pinterest/search direction: keep the O, open frame, robotics authority; avoid mascot heads, crypto grids, neon AI gradients.</text>
+  <g transform="translate(80 210)">
+    <rect width="330" height="330" rx="18" fill="#fff" stroke="#ddd"/>
+    <path d="M166 61 L250 110 L250 218 L166 269 L82 218 L82 110 Z" fill="#343a67"/>
+    <circle cx="166" cy="166" r="55" fill="#fff"/>
+    <path d="M166 61 L250 110 L198 110 L166 92 Z" fill="#f6f6f3"/>
+    <text x="0" y="390" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#111">Open robotics geometry</text>
+    <text x="0" y="426" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#555">Strong negative space, modular shape.</text>
+  </g>
+  <g transform="translate(455 210)">
+    <rect width="330" height="330" rx="18" fill="#fff" stroke="#ddd"/>
+    <circle cx="165" cy="165" r="90" fill="none" stroke="#111" stroke-width="58"/>
+    <rect x="162" y="74" width="72" height="72" fill="#fff"/>
+    <rect x="196" y="74" width="44" height="44" fill="#111"/>
+    <path d="M216 134 L250 134 L250 176 L216 176 Z" fill="#fff"/>
+    <text x="0" y="390" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#111">Minimal O mark</text>
+    <text x="0" y="426" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#555">Letter O plus engineered cutouts.</text>
+  </g>
+  <g transform="translate(830 210)">
+    <rect width="330" height="330" rx="18" fill="#fff" stroke="#ddd"/>
+    <circle cx="165" cy="140" r="78" fill="none" stroke="#111" stroke-width="20"/>
+    <rect x="100" y="118" width="130" height="55" rx="26" fill="#111"/>
+    <circle cx="136" cy="146" r="9" fill="#fff"/>
+    <circle cx="194" cy="146" r="9" fill="#fff"/>
+    <line x1="120" y1="79" x2="92" y2="39" stroke="#111" stroke-width="14" stroke-linecap="round"/>
+    <line x1="210" y1="79" x2="238" y2="39" stroke="#111" stroke-width="14" stroke-linecap="round"/>
+    <text x="0" y="390" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#111">Avoid mascot robot</text>
+    <text x="0" y="426" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#555">Too cute, generic, less fundable.</text>
+  </g>
+  <g transform="translate(1205 210)">
+    <rect width="330" height="330" rx="18" fill="#fff" stroke="#ddd"/>
+    <g fill="none" stroke="#111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="166" cy="166" r="95"/>
+      <path d="M86 214 C137 165 194 146 260 110"/>
+      <path d="M115 92 C170 125 207 188 231 252"/>
+    </g>
+    <circle cx="86" cy="214" r="12" fill="#111"/>
+    <circle cx="260" cy="110" r="12" fill="#111"/>
+    <text x="0" y="390" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#111">Trajectory motif</text>
+    <text x="0" y="426" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#555">World model / humanoid motion cue.</text>
+  </g>
+  <g transform="translate(80 760)">
+    <text x="0" y="0" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#111">Design rules extracted</text>
+    <text x="0" y="42" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#333">1. Pure mark first. 2. Black/white only. 3. Use O as open system, not Roboto-font wordmark. 4. One memorable cut, not decorative complexity.</text>
+    <text x="0" y="82" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#333">Recommended direction: open O ring + latent cube/trajectory aperture, engineered and serious.</text>
+  </g>
+</svg>

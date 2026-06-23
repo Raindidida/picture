@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <rect width="1600" height="1000" fill="#f7f7f4"/>
+  <text x="80" y="95" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#111">OpenRoboto logo concepts</text>
+  <text x="80" y="138" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#555">Simple graphic mark explorations, built for black/white use and favicon-scale recognition.</text>
+  <defs>
+    <style>
+      .label{font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;fill:#111}
+      .note{font-family:Arial,Helvetica,sans-serif;font-size:18px;fill:#555}
+    </style>
+  </defs>
+  <g transform="translate(90 220)">
+    <rect width="310" height="310" rx="16" fill="#fff" stroke="#ddd"/>
+    <g transform="translate(155 155)" fill="none" stroke="#111" stroke-width="34" stroke-linecap="butt">
+      <path d="M 38 -88 A 96 96 0 1 0 91 -28"/>
+    </g>
+    <rect x="168" y="113" width="72" height="72" transform="rotate(45 204 149)" fill="#111"/>
+    <rect x="191" y="136" width="26" height="26" transform="rotate(45 204 149)" fill="#fff"/>
+    <text class="label" x="0" y="370">A. Open latent O</text>
+    <text class="note" x="0" y="405">Open ring + latent cube aperture.</text>
+  </g>
+  <g transform="translate(455 220)">
+    <rect width="310" height="310" rx="16" fill="#fff" stroke="#ddd"/>
+    <circle cx="155" cy="155" r="92" fill="none" stroke="#111" stroke-width="36"/>
+    <path d="M168 57 H252 V96 H205 V143 H168 Z" fill="#fff"/>
+    <circle cx="234" cy="77" r="16" fill="#111"/>
+    <text class="label" x="0" y="370">B. Open node O</text>
+    <text class="note" x="0" y="405">Bittensor-like node without crypto grid.</text>
+  </g>
+  <g transform="translate(820 220)">
+    <rect width="310" height="310" rx="16" fill="#fff" stroke="#ddd"/>
+    <path d="M155 55 C210 55 255 100 255 155 C255 210 210 255 155 255 C100 255 55 210 55 155 C55 100 100 55 155 55 Z" fill="none" stroke="#111" stroke-width="33"/>
+    <path d="M86 192 C126 152 178 126 232 100" fill="none" stroke="#111" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="86" cy="192" r="18" fill="#fff" stroke="#111" stroke-width="14"/>
+    <circle cx="232" cy="100" r="18" fill="#111"/>
+    <text class="label" x="0" y="370">C. Trajectory O</text>
+    <text class="note" x="0" y="405">Motion data / policy rollout cue.</text>
+  </g>
+  <g transform="translate(1185 220)">
+    <rect width="310" height="310" rx="16" fill="#fff" stroke="#ddd"/>
+    <path d="M155 52 L242 103 L242 207 L155 258 L68 207 L68 103 Z" fill="#111"/>
+    <circle cx="155" cy="155" r="62" fill="#fff"/>
+    <path d="M155 52 L242 103 H190 L155 83 Z" fill="#fff"/>
+    <text class="label" x="0" y="370">D. Open frame</text>
+    <text class="note" x="0" y="405">Robotics authority, but less distinctive.</text>
+  </g>
+  <g transform="translate(80 760)">
+    <text x="0" y="0" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#111">Recommendation</text>
+    <text x="0" y="42" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#333">Choose A: it is the simplest, most ownable, and directly ties Open + O + world-model latent space without looking like a robot mascot or crypto mark.</text>
+  </g>
+</svg>

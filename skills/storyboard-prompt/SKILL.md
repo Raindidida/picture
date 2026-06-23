@@ -15,6 +15,8 @@ Use this skill to turn a user's character and optional scene references into a p
 
 ## Required Output Shape
 
+Default all storyboard prompts to Chinese unless the user explicitly asks for English or another language. Keep fixed tool-facing labels such as `GPT Image 2 Storyboard Prompt:` or `GPT Image 2 Prompt for storyboard:` in English if useful, but write the actual prompt body, shot descriptions, notes, constraints, and reference-use sentence in Chinese by default.
+
 Default v1 storyboard output to the template-style structure below:
 
 - `GPT Image 2 Storyboard Prompt:`
@@ -142,6 +144,7 @@ Use `storyboardv2` mode when the user explicitly asks for storyboardv2, provides
 Storyboardv2 defaults:
 
 - Start with `GPT Image 2 Prompt for storyboard:`
+- Write the storyboardv2 prompt body in Chinese by default unless the user explicitly requests English.
 - Generate one compact paragraph prompt unless the user asks for a panel-by-panel list.
 - Clean 16:9 premium rough-sketch storyboard sheet.
 - Low-detail graphite-gray, black-and-white semi-mannequin planning sketches on warm off-white paper.
@@ -153,7 +156,7 @@ Storyboardv2 defaults:
 - No arrows, motion lines, captions, labels, dialogue, logos, watermarks, UI overlays, subtitles, or production notes inside the panel images.
 - All timing, camera and technical information must be in the director strip only.
 - If color is needed, limit it to tiny style swatches or VFX/color notes outside the panels, not within the storyboard panels.
-- End the prompt with a short reference-use sentence when needed, for example: `Used only the storyboard reference for the video.`
+- End the prompt with a short Chinese reference-use sentence when needed, for example: `仅将参考图用于视频分镜与视觉一致性。`
 
 Storyboardv2 prompt structure:
 
@@ -328,6 +331,6 @@ Include clear negatives tailored to the request:
 
 ## Output Style
 
-Write in the user's language unless they ask for English. If the target image model prompt is likely better in English, provide the final prompt in English and optionally add a short Chinese note above it.
+Write the final storyboard prompt in Chinese by default, regardless of the user's mixed-language input, unless the user explicitly asks for English or another language. Do not switch to English just because the target image model may understand English well. If the user requests English, output English only; if they requests bilingual output, provide Chinese first and English second.
 
 Do not mention that this skill was used. Do not include implementation notes.
