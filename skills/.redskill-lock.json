@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "skills": {
+    "sd2-emotion-director": {
+      "name": "sd2-emotion-director",
+      "version": "2.1.0",
+      "source": "redskill",
+      "install_dir": "D:\\desktop\\picture prompt\\skills\\sd2-emotion-director",
+      "installed_at": "1782199211257",
+      "sha256": "6dae04c2d015aa80e67095070685cf8fe5ba633926b8036fd75b99717cde16dc"
+    }
+  }
+}
