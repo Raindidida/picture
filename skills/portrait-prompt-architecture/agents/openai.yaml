@@ -1,0 +1,4 @@
+interface:
+  display_name: "Portrait Prompt Architecture"
+  short_description: "Build compact modular AI portrait prompts"
+  default_prompt: "Use $portrait-prompt-architecture to create compact modular portrait image prompts."

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>《蓝色纸》完整镜头清单 - 中文 Seedance 2.0 提示词</title>
+  <style>
+    :root{--bg:#09090b;--panel:#121216;--panel2:#18181b;--line:#2a2a31;--text:#e7e7ea;--muted:#9ca3af;--red:#ef4444;--green:#22c55e;--amber:#f59e0b;--blue:#38bdf8;--violet:#a78bfa}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft YaHei",Arial,sans-serif;line-height:1.55}
+    .container{max-width:1680px;margin:0 auto;padding:28px}
+    .top{border:1px solid var(--line);background:linear-gradient(180deg,#18181b,#0f0f12);border-radius:14px;padding:28px;margin-bottom:18px}
+    h1{margin:0 0 8px;font-size:30px;letter-spacing:.02em}.sub{color:var(--muted)}
+    .stats{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}.stat{background:#0f0f12;border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:120px}.stat .v{font-size:24px;font-weight:800}.stat .l{font-size:12px;color:var(--muted)}
+    .toolbar{display:flex;gap:10px;margin:18px 0;position:sticky;top:0;background:rgba(9,9,11,.92);backdrop-filter:blur(10px);padding:12px 0;z-index:5}
+    input,select,button{background:#15151a;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 12px}input{flex:1}button{cursor:pointer}.clear{color:#fca5a5}
+    .toc{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px;margin-bottom:18px}.toc a{color:#fca5a5;margin-right:14px;text-decoration:none}
+    .block-title{font-size:22px;margin:26px 0 12px}.scene{border:1px solid var(--line);background:var(--panel);border-radius:14px;margin:18px 0 30px;overflow:hidden}.scene-head{padding:18px 20px;background:#17171c;border-bottom:1px solid var(--line)}.scene-num{font-size:12px;color:#fecaca;border:1px solid #7f1d1d;background:#2a1111;border-radius:999px;padding:4px 10px}.scene-title{margin:10px 0 6px;font-size:22px}.scene-meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:13px}.shot-count{color:#fca5a5}
+    .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1320px}th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top;padding:10px 11px}th{position:sticky;top:57px;background:#202027;z-index:3;color:#d4d4d8;font-size:12px;text-align:left}td{font-size:13px}.c-num{font-weight:800;color:#fca5a5}.badge{display:inline-block;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700}.p-ws{background:#164e63;color:#a5f3fc}.p-ms{background:#3f2d08;color:#fde68a}.p-cu{background:#4c1d1d;color:#fecaca}.p-ecu,.p-macro{background:#312e81;color:#ddd6fe}.p-os{background:#1f2937;color:#d1d5db}.p-pan{background:#14532d;color:#bbf7d0}
+    .script-inner{white-space:pre-wrap;color:#d6d3d1}.prompt-block{white-space:pre-wrap;background:#0b0b0d;border:1px solid #303036;border-radius:10px;padding:12px;color:#e5e7eb;font-size:12px;line-height:1.7}.prompt-title{border-top:1px solid #333;margin:12px 0 8px;padding-top:8px}.copy{margin-left:8px;padding:2px 8px;font-size:10px;color:#a1a1aa}.empty-state{padding:40px;text-align:center;color:var(--muted)}
+    @media print{.toolbar,.toc,.copy{display:none}body{background:white;color:black}.scene,.top{break-inside:avoid;background:white;color:black}.prompt-block{color:black;background:white}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="top">
+    <h1>《蓝色纸》完整镜头清单 <span>中文 Seedance 2.0 提示词</span></h1>
+    <div class="sub">全中文构建 · 20 个镜头 · 3 个场景 · 无台词第一人称 MV · 目标时长约 2 分 20 秒</div>
+    <div class="stats">
+      <div class="stat"><div class="v">3</div><div class="l">场景</div></div>
+      <div class="stat"><div class="v">20</div><div class="l">镜头</div></div>
+      <div class="stat"><div class="v">7</div><div class="l">景别类型</div></div>
+      <div class="stat"><div class="v">9</div><div class="l">生成提示词组</div></div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="搜索场景、动作、道具、提示词...">
+    <select id="planFilter">
+      <option value="">全部景别</option>
+      <option value="WS">全景</option>
+      <option value="MS">中景</option>
+      <option value="CU">近景</option>
+      <option value="ECU">极近特写</option>
+      <option value="MACRO">微距</option>
+      <option value="PAN">摇移/运动</option>
+      <option value="OS">画外声音</option>
+    </select>
+    <button onclick="window.print()">打印 / 导出 PDF</button>
+    <button class="clear" onclick="resetFilters()">重置</button>
+  </div>
+
+  <div class="toc">
+    <b>场景：</b>
+    <a href="#sc1">场景一：厕所隔间</a>
+    <a href="#sc2">场景二：厕所走道反击</a>
+    <a href="#sc3">场景三：书法房</a>
+  </div>
+
+  <h2 class="block-title">完整镜头表</h2>
+
+  <section class="scene pal-red" id="sc1">
+    <div class="scene-head">
+      <div><span class="scene-num">场景一</span></div>
+      <h2 class="scene-title">内景. 老旧公共厕所隔间 - 夜</h2>
+      <div class="scene-meta">
+        <span><b>地点：</b>狭窄木门隔间，空纸盒，潮湿瓷砖，门外清洁区</span>
+        <span><b>情绪：</b><i>尴尬求助 → 被处决 → 试错升级</i></span>
+        <span class="shot-count">11 个镜头</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="shotlist">
+        <colgroup><col style="width:64px"><col style="width:120px"><col style="width:150px"><col style="width:auto"><col style="width:25%"><col style="width:38%"></colgroup>
+        <thead><tr><th>#</th><th>景别</th><th>摄影机</th><th>动作</th><th>剧本段落</th><th>Seedance 2.0 中文提示词</th></tr></thead>
+        <tbody>
+          <tr data-scene="1" data-plan="ECU">
+            <td class="c-num">1.1</td><td><span class="badge p-ecu">极近特写</span></td><td>第一视角 / 50mm / 手持呼吸</td><td>黑场后亮起，男主摸空纸盒，两次确认没有纸。</td>
+            <td class="c-script" rowspan="4"><div class="script-inner">男主坐在厕所隔间里。裤子卡在膝盖。纸盒空。门外拖把声靠近。矮壮老阿姨弯腰贴近门缝，递出蓝纸和红纸。男主选择蓝纸，枪口贴上门缝，第一次死亡。</div></td>
+            <td class="c-prompt" rowspan="4">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 1</b><span style="color:#777;font-size:10px"> [无纸困境 + 蓝纸处决]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角身体局部）普通中国男性，二十多到三十多岁，白衬衫袖口皱，裤子卡在膝盖，手背有汗，指甲短，动作慌乱但真实。
+@image2（壮矮老阿姨）矮小但肩背特别厚实的中国农村老阿姨，黑布鞋，白袜子，深色裤脚沾泥，厚围裙，粗手，眼袋极重，脸色灰白，像僵硬的病态脸但仍是真实活人。
+@image3（老旧公共厕所隔间）窄木门，竖向门缝，空塑料纸盒，潮湿白灰瓷砖，门下有水痕，走道有拖把。
+⚠️空间布局：摄影机始终为男主第一视角，位于隔间马桶上；木门距离镜头约1米；阿姨在门外正前方，脸只通过门缝局部出现；禁止第三人称镜头。
+⚠️本视频严格无台词、无字幕、无旁白；只允许呼吸、滴水、拖把声、纸摩擦、消音枪声。
+【镜头1】机位：50mm近距离第一视角，F2.0，手持呼吸轻微不稳。背景：空纸盒占画面右侧，膝盖和裤子边缘在下方。动作：①手伸向纸盒；②指尖摸空；③停顿0.5秒；④再次摸空；⑤手指僵住。微表演：手指关节发白，掌心有汗，呼吸短促。
+【镜头2】机位：35mm第一视角，低角度对准门下。动作：拖把声靠近，黑布鞋停在门外，泥点和湿鞋边清晰。摄影机随男主呼吸微微下沉。
+【镜头3】机位：85mm极近特写门缝，F1.4浅景深。动作：阿姨半张灰白脸贴近门缝，眼袋沉重；两卷纸从门缝前举起，左蓝右红；男主颤抖的手指向蓝纸。
+【镜头4】机位：50mm第一视角，硬切。动作：蓝纸缩回，黑色消音枪口贴上门缝；男主后仰，枪口轻微一震，画面瞬间黑场。
+风格：8K IMAX超写实，真实手持第一人称，禁止3D渲染、禁止游戏CG、禁止夸张鬼怪脸。灯光：仅厕所实际顶灯和走道弱光，禁止电影补光、禁止LED灯带、禁止可见光束。色彩：60:30:10——脏白瓷砖/深灰阴影/蓝纸点色。环境活动：只有滴水和拖把声，无背景音乐。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="1" data-plan="OS"><td class="c-num">1.2</td><td><span class="badge p-os">画外声音</span></td><td>静止 / 第一视角</td><td>拖把声从远到近，黑布鞋停在门外。</td></tr>
+          <tr data-scene="1" data-plan="CU"><td class="c-num">1.3</td><td><span class="badge p-cu">近景</span></td><td>85mm / 门缝特写</td><td>阿姨半张脸贴近门缝，递出蓝纸和红纸。</td></tr>
+          <tr data-scene="1" data-plan="ECU"><td class="c-num">1.4</td><td><span class="badge p-ecu">极近特写</span></td><td>50mm / 硬切</td><td>男主指向蓝纸，枪口贴门缝，第一次黑场死亡。</td></tr>
+
+          <tr data-scene="1" data-plan="PAN">
+            <td class="c-num">1.5</td><td><span class="badge p-pan">运动镜头</span></td><td>第一视角奔跑 / 35mm</td><td>重置后踹门冲出，跑向出口，背后两枪命中。</td>
+            <td class="c-script" rowspan="3"><div class="script-inner">男主重置回隔间。不再选择，直接踹门逃跑。镜头冲过洗手池，手抓到出口门把，背后两声消音枪，黑场。</div></td>
+            <td class="c-prompt" rowspan="3">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 2</b><span style="color:#777;font-size:10px"> [踹门逃跑 + 背后两枪]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角）同一男主，手背出汗，裤腰被匆忙提起，动作狼狈。
+@image2（壮矮老阿姨）同一阿姨，黑布鞋、厚围裙、粗手，持消音手枪。
+@image3（厕所走道）狭长洗手区，左侧洗手池，前方出口门，地面湿滑。
+⚠️空间布局：男主从隔间向南侧出口直线冲刺；阿姨在男主身后约2.5米；出口门在前方约4米；禁止让男主成功出门。
+⚠️无台词。只允许踹门声、奔跑喘息、两声闷枪。
+【镜头1】机位：第一视角35mm，手持剧烈但仍可辨认空间。动作：脚猛踹隔间门，门撞到阿姨肩膀，阿姨退半步。
+【镜头2】机位：第一视角奔跑，60fps，180度快门运动模糊。动作：洗手池从左侧快速掠过，男主一只手提裤，一只手伸向出口门把。
+【镜头3】机位：第一视角近距离出口门把。动作：手刚抓住门把，背后两声消音枪，镜头前冲撞门，黑场。
+风格：8K IMAX超写实，第一视角动作摄影，真实重力和碰撞，禁止过度摇晃导致空间不可读。灯光仅厕所顶灯和出口弱光，禁止补光。色彩：60%脏白、30%暗绿灰、10%红色危险点缀。环境活动：空厕所，无路人。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="1" data-plan="MS"><td class="c-num">1.6</td><td><span class="badge p-ms">中景</span></td><td>手持 / 35mm</td><td>洗手池掠过，出口门出现。</td></tr>
+          <tr data-scene="1" data-plan="ECU"><td class="c-num">1.7</td><td><span class="badge p-ecu">极近特写</span></td><td>门把特写</td><td>手抓门把，背后两枪，撞门黑场。</td></tr>
+
+          <tr data-scene="1" data-plan="CU">
+            <td class="c-num">1.8</td><td><span class="badge p-cu">近景</span></td><td>第一视角 / 50mm</td><td>男主扯下马桶盖，踹门，用盖子挡住一枪。</td>
+            <td class="c-script" rowspan="4"><div class="script-inner">男主再次重置。他盯住马桶盖，扯下当盾牌。踹门后阿姨开枪，马桶盖裂开。两人撞到洗手池边近身搏斗，男主试图抢枪，阿姨力量压制，并从围裙里露出第二把枪。</div></td>
+            <td class="c-prompt" rowspan="4">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 3</b><span style="color:#777;font-size:10px"> [马桶盖盾牌 + 近身搏斗]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角）双手抓马桶盖，手指发白，手腕有汗。
+@image2（壮矮老阿姨）矮小壮实，厚围裙，粗手，眼袋重，持第一把消音枪，围裙内藏第二把枪。
+@image3（厕所洗手区）洗手池、湿瓷砖、隔间门、掉落手枪。
+@image4（马桶盖盾牌）白色塑料马桶盖，边缘螺丝被扯断，随后出现子弹裂纹。
+⚠️空间布局：男主从隔间门内冲出，阿姨在门外正前方约1米；洗手池在左侧0.8米；掉落手枪在两人右侧地面约0.6米。
+⚠️真实搏斗：阿姨可以被撞退、被打疼，但力量明显压制男主；禁止超自然瞬移。
+【镜头1】机位：第一视角50mm，低头近景。动作：男主双手抓马桶盖，用力扯断螺丝，手腕抖动，呼吸急促。
+【镜头2】机位：第一视角35mm，踹门硬切。动作：门开，阿姨抬枪；男主举马桶盖，子弹打裂盖子，碎片弹到镜头边缘。
+【镜头3】机位：第一视角贴身混战，60fps动作。动作：男主撞向阿姨胸前，两人摔向洗手池，第一把枪掉地；男主伸手抢枪，阿姨粗手抓住手腕，把手腕砸向瓷砖。
+【镜头4】机位：第一视角低位近景。动作：男主用裂开的马桶盖砸阿姨脸，阿姨偏头未倒，用膝盖顶住男主腹部，围裙里露出第二把枪，枪口抖动后开枪黑场。
+风格：8K IMAX超写实，真实近身格斗，皮肤毛孔、汗、瓷砖水渍清晰。灯光仅厕所实际顶灯，阴影侧拍摄，禁止补光。色彩：60%脏白瓷砖、30%黑灰阴影、10%红色危险。环境活动：无旁人，只有喘息、撞击、枪声。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="1" data-plan="MS"><td class="c-num">1.9</td><td><span class="badge p-ms">中景</span></td><td>35mm / 手持动作</td><td>撞向阿姨胸前，两人摔向洗手池。</td></tr>
+          <tr data-scene="1" data-plan="ECU"><td class="c-num">1.10</td><td><span class="badge p-ecu">极近特写</span></td><td>手腕 / 枪 / 瓷砖</td><td>男主抢枪，被阿姨砸手腕。</td></tr>
+          <tr data-scene="1" data-plan="CU"><td class="c-num">1.11</td><td><span class="badge p-cu">近景</span></td><td>低位手持</td><td>阿姨围裙露第二把枪，男主再次被枪杀。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="scene pal-red" id="sc2">
+    <div class="scene-head">
+      <div><span class="scene-num">场景二</span></div>
+      <h2 class="scene-title">内景. 公共厕所走道 - 夜</h2>
+      <div class="scene-meta">
+        <span><b>地点：</b>洗手池、隔间门、出口门、天花板长条灯</span>
+        <span><b>情绪：</b><i>硬拼失败 → 红纸陷阱 → 战术反击</i></span>
+        <span class="shot-count">6 个镜头</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="shotlist">
+        <colgroup><col style="width:64px"><col style="width:120px"><col style="width:150px"><col style="width:auto"><col style="width:25%"><col style="width:38%"></colgroup>
+        <thead><tr><th>#</th><th>景别</th><th>摄影机</th><th>动作</th><th>剧本段落</th><th>Seedance 2.0 中文提示词</th></tr></thead>
+        <tbody>
+          <tr data-scene="2" data-plan="PAN">
+            <td class="c-num">2.1</td><td><span class="badge p-pan">快剪</span></td><td>第一视角 / 硬切蒙太奇</td><td>三次搏斗失败：拖把断、泼水、抢枪被踩。</td>
+            <td class="c-script" rowspan="2"><div class="script-inner">男主多轮快剪试错。抓拖把失败，泼水失败，摸到枪又被阿姨踩住手。每次都被消音枪结束。随后他选择红纸，厕所走道短暂安静。</div></td>
+            <td class="c-prompt" rowspan="2">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 4</b><span style="color:#777;font-size:10px"> [三次失败蒙太奇 + 红纸安静]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角）手部动作狼狈，呼吸断裂。
+@image2（壮矮老阿姨）稳定、沉默、持枪，围裙厚重。
+@image3（厕所走道）拖把、洗手池、水渍、隔间门。
+⚠️本段是快剪失败蒙太奇，每个动作2-4秒，死亡黑场不超过1秒。
+【镜头1】机位：第一视角35mm快切。动作：男主抓拖把横扫，拖把木杆折断，阿姨一步压近，消音枪闷响黑场。
+【镜头2】机位：第一视角近景。动作：男主把水泼向阿姨，水花打在她脸上，她闭眼一秒后抬枪，黑场。
+【镜头3】机位：地面低位第一视角。动作：男主摸到地上的枪，阿姨黑布鞋踩住他的手，指骨被压，枪声黑场。
+【镜头4】机位：回到隔间门缝，85mm近景。动作：蓝纸和红纸再次递入，男主闭眼，颤抖手指向红纸；红纸掉在地上，没有枪声。
+风格：8K IMAX超写实，动作快但空间真实可辨。灯光仅厕所顶灯，禁止电影补光。色彩：60%脏白、30%黑灰、10%红纸点色。环境活动：无音乐，只有打斗撞击、喘息、闷枪、水声。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="2" data-plan="CU"><td class="c-num">2.2</td><td><span class="badge p-cu">近景</span></td><td>85mm / 门缝</td><td>男主闭眼指向红纸，红纸落地，没有枪声。</td></tr>
+
+          <tr data-scene="2" data-plan="WS">
+            <td class="c-num">2.3</td><td><span class="badge p-ws">全景</span></td><td>第一视角 / 35mm</td><td>男主开门，厕所走道空无一人，走向出口。</td>
+            <td class="c-script" rowspan="2"><div class="script-inner">红纸似乎安全。男主开门，走道无人。他走向出口，门突然从外面拉开，阿姨背着红色喷火器出现，火焰吞没镜头。</div></td>
+            <td class="c-prompt" rowspan="2">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 5</b><span style="color:#777;font-size:10px"> [红纸假安全 + 喷火器]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角）动作谨慎，手放在门把上时颤抖。
+@image2（壮矮老阿姨）背红色喷火器，厚围裙外仍可见，脸色灰白，眼袋重。
+@image3（厕所出口）窄出口门，门外黑暗，走道湿地。
+⚠️喷火器必须突然出现，前一镜绝对不能提前露出。
+【镜头1】机位：第一视角35mm，缓慢推门。动作：门打开，厕所走道空着，拖把倒在地上，男主脚步很轻，摄影机呼吸变慢。
+【镜头2】机位：第一视角门把极近特写。动作：手碰到出口门把，门突然从外面拉开。
+【镜头3】机位：第一视角中近景。动作：阿姨背着红色喷火器站在门外，喷枪抬起，火焰直接冲向镜头，红光吞没画面。
+风格：8K IMAX超写实，真实火焰和热浪，禁止魔法火、禁止CG粒子感。灯光仅厕所顶灯和火焰瞬间照明，禁止额外补光。色彩：60%深红火光、30%黑、10%脏白瓷砖。环境活动：门轴声、呼吸、喷火器点燃声。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="2" data-plan="ECU"><td class="c-num">2.4</td><td><span class="badge p-ecu">极近特写</span></td><td>门把特写 → 火焰扑面</td><td>出口门外拉，喷火器火焰冲向第一视角。</td></tr>
+
+          <tr data-scene="2" data-plan="PAN">
+            <td class="c-num">2.5</td><td><span class="badge p-pan">运动镜头</span></td><td>第一视角 / 战术运动</td><td>重置后男主看见灯，打碎灯，藏进洗手池下。</td>
+            <td class="c-script" rowspan="2"><div class="script-inner">男主再次重置，崩溃抱头。看见天花板长条灯后改变策略。他选择红纸，拿水箱盖出隔间，不去出口，爬上洗手池打碎灯，藏到洗手池下。阿姨逐间搜索，男主从背后偷袭，抢到枪。</div></td>
+            <td class="c-prompt" rowspan="2">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 6</b><span style="color:#777;font-size:10px"> [打碎灯 + 藏匿偷袭]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角）濒临崩溃后突然专注，持水箱盖。
+@image2（壮矮老阿姨）持枪搜索，矮壮身形，背对洗手池时脖颈和围裙清晰。
+@image3（厕所洗手区）洗手池、下方柜体阴影、长条灯、隔间门。
+@image4（水箱盖）沉重白色水箱盖，边缘湿滑，作为近身武器。
+⚠️空间布局：洗手池在走道左侧；隔间门成一排在右侧；男主藏在洗手池下方柜体阴影；阿姨从右侧逐间开门，背对男主时距离约1.2米。
+【镜头1】机位：第一视角50mm。动作：男主抱头喘息，视线突然抬到天花板长条灯；镜头冻结0.3秒，表示想到办法。
+【镜头2】机位：第一视角35mm动作。动作：男主拿水箱盖出隔间，爬上洗手池，砸碎灯管，厕所暗下来，碎玻璃落入池中。
+【镜头3】机位：第一视角低位，藏在洗手池下。动作：黑布鞋进入画面，阿姨逐间踹门搜索，第一间空，第二间空；她背对洗手池。
+【镜头4】机位：第一视角冲出阴影。动作：男主从背后举起水箱盖砸下，阿姨跪倒；两人摔地，阿姨摸围裙，男主踢开她的手，手枪滑出，男主抓住枪举起。
+风格：8K IMAX超写实，真实暗光厕所，禁止超自然黑暗，禁止看不清动作。灯光仅剩破碎顶灯残余闪烁和厕所实际弱光，禁止补光。色彩：60%黑灰、30%脏白、10%红色危险。环境活动：碎玻璃、踹门、喘息、衣料摩擦。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="2" data-plan="CU"><td class="c-num">2.6</td><td><span class="badge p-cu">近景</span></td><td>低位手持 / 抢枪</td><td>男主背后偷袭，摔地搏斗，抢枪，阿姨停住。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="scene pal-red" id="sc3">
+    <div class="scene-head">
+      <div><span class="scene-num">场景三</span></div>
+      <h2 class="scene-title">内景. 书法教室 - 夜</h2>
+      <div class="scene-meta">
+        <span><b>地点：</b>白墙、长桌、毛笔、宣纸、墨汁、黑墙</span>
+        <span><b>情绪：</b><i>逃脱 → 进入新牢笼 → 受害者变威胁者</i></span>
+        <span class="shot-count">3 个镜头</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="shotlist">
+        <colgroup><col style="width:64px"><col style="width:120px"><col style="width:150px"><col style="width:auto"><col style="width:25%"><col style="width:38%"></colgroup>
+        <thead><tr><th>#</th><th>景别</th><th>摄影机</th><th>动作</th><th>剧本段落</th><th>Seedance 2.0 中文提示词</th></tr></thead>
+        <tbody>
+          <tr data-scene="3" data-plan="WS">
+            <td class="c-num">3.1</td><td><span class="badge p-ws">全景</span></td><td>第一视角 / 35mm</td><td>男主推开出口，却进入书法教室。</td>
+            <td class="c-script" rowspan="3"><div class="script-inner">男主抢枪逃出厕所出口。门后不是走廊，而是安静书法教室。桌边男人醒来，看见枪后举起双手。男主回头，厕所门消失，只剩黑墙。他摸墙，确认实心。转回身后，手抖着举枪对准无武器男人。</div></td>
+            <td class="c-prompt" rowspan="3">
+              <div class="prompt-title"><b style="color:#22c55e">提示词 7</b><span style="color:#777;font-size:10px"> [出口变书法房 + 举枪结尾]</span><button class="copy" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">复制</button></div>
+              <div class="prompt-block">多机位剪辑（multi-shot）。
+@image1（男主第一视角持枪）同一男主，右手握消音手枪，手指和枪口明显颤抖，呼吸沉重。
+@image2（书法房男人）普通中国男性，刚从长桌上醒来，手无寸铁，白衬衫或深色上衣，脸上有惊醒后的僵硬。
+@image3（书法教室）白墙、长桌、毛笔、宣纸、墨汁、安静干净，与厕所形成强烈反差；门后变成一面黑色实墙。
+@image4（消音手枪）黑色小型手枪，真实金属重量，枪口始终不要飘。
+⚠️空间布局：男主从画面南侧进入书法房；长桌在画面中央偏北；醒来的男人在桌后约3米；男主回头时身后是黑色实墙，厕所门消失但不要做超现实特效，只像真实墙面。
+⚠️无台词、无字幕。男人只用举手、后缩、闭眼表达恐惧。
+【镜头1】机位：第一视角35mm全景。动作：出口门推开，脚步停住，眼前是白墙书法教室；毛笔、宣纸、墨汁在长桌上清楚可见。
+【镜头2】机位：第一视角50mm中景。动作：桌边男人醒来，看见枪，身体后缩，双手慢慢举起，瞳孔扩张，嘴微张无声。
+【镜头3】机位：第一视角慢回头再转回。动作：男主回头摸黑墙，手掌按上实心墙；再转回来，看见男人手无寸铁；男主低头看枪，手抖，慢慢举枪对准男人，画面黑。
+风格：8K IMAX超写实，真实房间切换，不做魔法门，不做视觉特效。灯光仅书法教室实际顶灯，禁止电影补光，摄影机在阴影侧拍摄。色彩：60%冷白墙、30%墨黑、10%红色紧张余韵。环境活动：厕所滴水声消失，变成墨滴声；无音乐、无字幕。15秒，21:9。</div>
+            </td>
+          </tr>
+          <tr data-scene="3" data-plan="MS"><td class="c-num">3.2</td><td><span class="badge p-ms">中景</span></td><td>50mm / 第一视角</td><td>书法房男人醒来，看见枪，举手后缩。</td></tr>
+          <tr data-scene="3" data-plan="CU"><td class="c-num">3.3</td><td><span class="badge p-cu">近景</span></td><td>慢回头 / 手枪近景</td><td>男主摸黑墙，转回，颤抖举枪对准男人。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="empty-state" id="emptyState" style="display:none;">没有找到匹配内容，请重置筛选。</div>
+</div>
+
+<script>
+  const search = document.getElementById('search');
+  const plan = document.getElementById('planFilter');
+  const rows = [...document.querySelectorAll('tbody tr')];
+  function applyFilters(){
+    const q = search.value.trim().toLowerCase();
+    const p = plan.value;
+    let visible = 0;
+    rows.forEach(r=>{
+      const okQ = !q || r.innerText.toLowerCase().includes(q);
+      const okP = !p || r.dataset.plan === p;
+      const show = okQ && okP;
+      r.style.display = show ? '' : 'none';
+      if(show) visible++;
+    });
+    document.getElementById('emptyState').style.display = visible ? 'none':'block';
+  }
+  function resetFilters(){search.value='';plan.value='';applyFilters();}
+  search.addEventListener('input', applyFilters);
+  plan.addEventListener('change', applyFilters);
+</script>
+</body>
+</html>

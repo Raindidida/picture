@@ -1,0 +1,4 @@
+interface:
+  display_name: "Character Identity Board Prompt"
+  short_description: "Generate original GPT Image character identity board prompts"
+  default_prompt: "Use -identity-board-prompt to turn my character seed into a GPT Image 2 character identity board prompt."
