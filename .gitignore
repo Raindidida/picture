@@ -25743,3 +25743,40 @@ video_storyboard_analysis.md
 兔烟_第一集_MX_Shell结构化提示词.md
 兔烟_第一集_分镜表与提示词_表格版.md
 兔烟_第一集_新MX情绪导演_MJ_GPT提示词.md
+
+# Local generated/downloaded media and caches
+# Added for github-sync-archive on 2026-08-06.
+downloads/
+dwonleod/
+download/
+Downloads/
+video02_work/
+video03_work/
+analysis_frames/
+video_frames/
+subtitle_frames/
+edited_flags/
+tmp/
+.tmp_video_analysis/
+.tmp_skill_create/
+.npm-cache/
+node_modules/
+
+# Large media / generated binary files
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.m4v
+*.mp3
+*.m4a
+*.wav
+*.flac
+*.aac
+*.m4s
+*.part
+*.zip
+*.7z
+*.rar
+*.onnx

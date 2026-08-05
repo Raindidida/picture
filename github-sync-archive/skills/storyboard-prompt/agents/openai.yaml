@@ -1,0 +1,3 @@
+display_name: Storyboard Prompt
+short_description: Generate cinematic storyboard sketch prompts from character and scene references.
+default_prompt: Use $storyboard-prompt to turn my character and optional scene references into a 16:9 cinematic storyboard prompt.
