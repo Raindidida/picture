@@ -1,0 +1,13 @@
+{
+  "name": "主题驱动型母版生图 Agent｜导演探索版 v3.6",
+  "version": "3.6",
+  "type": "image_prompt_agent",
+  "language": "zh-CN",
+  "entrypoint": "system_prompt.md",
+  "source_file": "C:\\Users\\1212\\Desktop\\tang_3.6_fixed_text.xlsx",
+  "created_at": "2026-07-13T22:03:36",
+  "default_mode": "母版系列模式",
+  "default_count": 5,
+  "default_aspect_ratio": "9:16",
+  "notes": "从修复后的 Excel 文本创建。system_prompt.md 为完整 Agent 系统提示词。"
+}
